@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nautical Hosting - RGB Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+        }
+        
+        .navbar {
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .navbar h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(45deg, #4ecdc4, #45b7d1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: bold;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+        
+        .text-input-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .text-input-label {
+            font-size: 1.2rem;
+            color: #4ecdc4;
+            margin-bottom: 15px;
+        }
+        
+        .preview-input {
+            width: 100%;
+            background: #2a2a2a;
+            border: 2px solid #555;
+            border-radius: 8px;
+            padding: 20px;
+            color: white;
+            font-size: 24px;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 1px;
+            min-height: 80px;
+            resize: vertical;
+        }
+        
+        .preview-input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+        
+        .preview-output {
+            width: 100%;
+            background: #1a1a1a;
+            border: 2px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+            font-size: 24px;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 1px;
+            min-height: 80px;
+            margin-top: 15px;
+            word-wrap: break-word;
+            line-height: 1.4;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 30px;
+        }
+        
+        .colors-panel, .export-panel, .formatting-panel {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .panel-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #4ecdc4;
+        }
+        
+        .colors-list {
+            margin-bottom: 20px;
+        }
+        
+        .color-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .color-input {
+            width: 40px;
+            height: 40px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background: none;
+        }
+        
+        .hex-input {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 6px;
+            padding: 8px;
+            color: white;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            width: 80px;
+            text-transform: uppercase;
+        }
+        
+        .hex-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .random-color-btn {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            border: none;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.2s;
+            font-size: 12px;
+        }
+        
+        .random-color-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .trash-btn {
+            background: #ff6b6b;
+            border: none;
+            color: white;
+            padding: 8px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .trash-btn:hover {
+            background: #e55555;
+        }
+        
+        .add-color-btn {
+            background: linear-gradient(45deg, #4ecdc4, #45b7d1);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            transition: transform 0.2s;
+            width: 100%;
+        }
+        
+        .add-color-btn:hover {
+            transform: scale(1.02);
+        }
+        
+        .formatting-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .format-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        .format-btn.active {
+            background: #4ecdc4;
+            border-color: #4ecdc4;
+        }
+        
+        .format-btn:hover {
+            background: rgba(78, 205, 196, 0.5);
+        }
+        
+        .export-dropdown {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            padding: 12px;
+            color: white;
+            font-size: 16px;
+            margin-bottom: 15px;
+            appearance: none;
+            cursor: pointer;
+        }
+        
+        .export-dropdown option {
+            background: #2a2a2a;
+            color: white;
+        }
+        
+        .export-output {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            word-break: break-all;
+            color: #ccc;
+            min-height: 150px;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .copy-btn {
+            background: #45b7d1;
+            border: none;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 15px;
+            transition: background 0.3s;
+            width: 100%;
+        }
+        
+        .copy-btn:hover {
+            background: #357abd;
+        }
+        
+        .copy-btn.copied {
+            background: #4ecdc4;
+        }
+        
+        .format-label {
+            font-size: 1.1rem;
+            color: #4ecdc4;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 15px 20px;
+            }
+            
+            .navbar h1 {
+                font-size: 1.5rem;
+            }
+            
+            .formatting-options {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <h1>Nautical Hosting</h1>
+    </nav>
+    
+    <div class="container">
+        <div class="text-input-section">
+            <div class="text-input-label">Text Preview</div>
+            <textarea class="preview-input" id="previewInput" placeholder="Type your Minecraft text here and see it styled in real-time..." oninput="updatePreview()" rows="3"></textarea>
+            <div class="preview-output" id="previewOutput">Type some text above to see the gradient preview...</div>
+        </div>
+        
+        <div class="main-content">
+            <div class="colors-panel">
+                <h2 class="panel-title">Colors</h2>
+                
+                <div class="colors-list" id="colorsList">
+                    <!-- Colors will be added here -->
+                </div>
+                
+                <button class="add-color-btn" onclick="addColor()">+ Add Color</button>
+            </div>
+            
+            <div class="export-panel">
+                <h2 class="panel-title">Export</h2>
+                
+                <select class="export-dropdown" id="exportDropdown" onchange="updateExport()">
+                    <option value="minimessage">MiniMessage</option>
+                    <option value="bukkit">&#rrggbb&l</option>
+                    <option value="legacy">§x§r§r§g§g§b§b&l</option>
+                    <option value="essentials">&x&r&r&g&g&b&b&l</option>
+                    <option value="placeholderapi"><#rrggbb>&l</option>
+                    <option value="doublehash"><##rrggbb>&l</option>
+                    <option value="bbcode">[COLOR=#rrggbb][/COLOR]</option>
+                </select>
+                
+                <div class="export-output" id="exportOutput">
+                    Add some text and colors to see the export code...
+                </div>
+                
+                <button class="copy-btn" id="copyBtn" onclick="copyToClipboard()">Copy to Clipboard</button>
+            </div>
+            
+            <div class="formatting-panel">
+                <h2 class="panel-title">Global Formatting</h2>
+                <div class="format-label">Apply to all text:</div>
+                
+                <div class="formatting-options">
+                    <button class="format-btn" id="boldBtn" onclick="toggleGlobalFormat('bold')">Bold</button>
+                    <button class="format-btn" id="italicBtn" onclick="toggleGlobalFormat('italic')">Italic</button>
+                    <button class="format-btn" id="underlineBtn" onclick="toggleGlobalFormat('underline')">Underline</button>
+                    <button class="format-btn" id="strikethroughBtn" onclick="toggleGlobalFormat('strikethrough')">Strikethrough</button>
+                    <button class="format-btn" id="obfuscateBtn" onclick="toggleGlobalFormat('obfuscate')">Obfuscate</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let colors = [];
+        let colorCounter = 0;
+        let globalFormatting = {
+            bold: false,
+            italic: false,
+            underline: false,
+            strikethrough: false,
+            obfuscate: false
+        };
+
+        // Initialize with two colors for gradient
+        function init() {
+            addColor('#ff0000');
+            addColor('#0000ff');
+        }
+
+        function addColor(hexValue = null) {
+            const color = {
+                id: colorCounter++,
+                hex: hexValue || randomColor()
+            };
+            
+            colors.push(color);
+            renderColors();
+            updatePreview();
+        }
+
+        function removeColor(id) {
+            if (colors.length > 1) {
+                colors = colors.filter(color => color.id !== id);
+                renderColors();
+                updatePreview();
+            }
+        }
+
+        function updateColorHex(id, value) {
+            // Ensure hex format
+            if (!value.startsWith('#')) {
+                value = '#' + value;
+            }
+            
+            // Validate hex
+            if (/^#[0-9A-Fa-f]{6}$/.test(value)) {
+                const color = colors.find(c => c.id === id);
+                if (color) {
+                    color.hex = value.toUpperCase();
+                    renderColors();
+                    updatePreview();
+                    updateExport();
+                }
+            }
+        }
+
+        function randomColor() {
+            return '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0').toUpperCase();
+        }
+
+        function renderColors() {
+            const container = document.getElementById('colorsList');
+            container.innerHTML = '';
+
+            colors.forEach(color => {
+                const colorDiv = document.createElement('div');
+                colorDiv.className = 'color-item';
+                colorDiv.innerHTML = `
+                    <input type="color" class="color-input" value="${color.hex}" 
+                           onchange="updateColorHex(${color.id}, this.value)">
+                    <input type="text" class="hex-input" value="${color.hex}" 
+                           onchange="updateColorHex(${color.id}, this.value)"
+                           oninput="updateColorHex(${color.id}, this.value)"
+                           maxlength="7">
+                    <button class="random-color-btn" onclick="randomizeColor(${color.id})">Random</button>
+                    ${colors.length > 1 ? `<button class="trash-btn" onclick="removeColor(${color.id})" title="Remove Color">🗑️</button>` : ''}
+                `;
+                container.appendChild(colorDiv);
+            });
+        }
+
+        function randomizeColor(id) {
+            const newColor = randomColor();
+            const color = colors.find(c => c.id === id);
+            if (color) {
+                color.hex = newColor;
+                renderColors();
+                updatePreview();
+                updateExport();
+            }
+        }
+
+        function toggleGlobalFormat(format) {
+            globalFormatting[format] = !globalFormatting[format];
+            const btn = document.getElementById(format + 'Btn');
+            btn.classList.toggle('active', globalFormatting[format]);
+            updatePreview();
+            updateExport();
+        }
+
+        function interpolateColor(color1, color2, factor) {
+            const rgb1 = hexToRgb(color1);
+            const rgb2 = hexToRgb(color2);
+            
+            const r = Math.round(rgb1.r + (rgb2.r - rgb1.r) * factor);
+            const g = Math.round(rgb1.g + (rgb2.g - rgb1.g) * factor);
+            const b = Math.round(rgb1.b + (rgb2.b - rgb1.b) * factor);
+            
+            return rgbToHex(r, g, b);
+        }
+
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : null;
+        }
+
+        function rgbToHex(r, g, b) {
+            return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
+        }
+
+        function getColorForPosition(position, totalLength) {
+            if (colors.length === 0) return '#FFFFFF';
+            if (colors.length === 1) return colors[0].hex;
+            
+            const segmentLength = totalLength / (colors.length - 1);
+            const segmentIndex = Math.floor(position / segmentLength);
+            const segmentProgress = (position % segmentLength) / segmentLength;
+            
+            if (segmentIndex >= colors.length - 1) {
+                return colors[colors.length - 1].hex;
+            }
+            
+            return interpolateColor(colors[segmentIndex].hex, colors[segmentIndex + 1].hex, segmentProgress);
+        }
+
+        function updatePreview() {
+            const input = document.getElementById('previewInput');
+            const output = document.getElementById('previewOutput');
+            const text = input.value;
+            
+            if (!text) {
+                output.innerHTML = 'Type some text above to see the gradient preview...';
+                updateExport();
+                return;
+            }
+            
+            // Create styled text
+            let styledText = '';
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
+                const color = getColorForPosition(i, text.length);
+                
+                let styles = [`color: ${color}`];
+                
+                if (globalFormatting.bold) styles.push('font-weight: bold');
+                if (globalFormatting.italic) styles.push('font-style: italic');
+                if (globalFormatting.underline) styles.push('text-decoration: underline');
+                if (globalFormatting.strikethrough) styles.push('text-decoration: line-through');
+                if (globalFormatting.underline && globalFormatting.strikethrough) {
+                    styles = styles.filter(s => !s.includes('text-decoration'));
+                    styles.push('text-decoration: underline line-through');
+                }
+                
+                let displayChar = char;
+                if (globalFormatting.obfuscate && char !== ' ' && char !== '\n') {
+                    displayChar = String.fromCharCode(33 + Math.floor(Math.random() * 94));
+                }
+                
+                if (char === '\n') {
+                    styledText += '<br>';
+                } else {
+                    styledText += `<span style="${styles.join('; ')}">${displayChar === ' ' ? '&nbsp;' : displayChar}</span>`;
+                }
+            }
+            
+            output.innerHTML = styledText;
+            updateExport();
+        }
+
+        function updateExport() {
+            const text = document.getElementById('previewInput').value;
+            const format = document.getElementById('exportDropdown').value;
+            const output = document.getElementById('exportOutput');
+            
+            if (!text) {
+                output.textContent = 'Add some text and colors to see the export code...';
+                return;
+            }
+            
+            const exportCode = generateExport(text, format);
+            output.textContent = exportCode;
+        }
+
+        function generateExport(text, format) {
+            if (!text || colors.length === 0) return '';
+            
+            let result = '';
+            
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
+                const color = getColorForPosition(i, text.length);
+                const hex = color.substring(1);
+                const r = hex.substring(0, 2).toLowerCase();
+                const g = hex.substring(2, 4).toLowerCase();
+                const b = hex.substring(4, 6).toLowerCase();
+                
+                switch (format) {
+                    case 'minimessage':
+                        let mm = `<#${hex.toLowerCase()}>`;
+                        if (globalFormatting.bold) mm += '<b>';
+                        if (globalFormatting.italic) mm += '<i>';
+                        if (globalFormatting.underline) mm += '<u>';
+                        if (globalFormatting.strikethrough) mm += '<st>';
+                        if (globalFormatting.obfuscate) mm += '<obf>';
+                        mm += char;
+                        if (globalFormatting.obfuscate) mm += '</obf>';
+                        if (globalFormatting.strikethrough) mm += '</st>';
+                        if (globalFormatting.underline) mm += '</u>';
+                        if (globalFormatting.italic) mm += '</i>';
+                        if (globalFormatting.bold) mm += '</b>';
+                        result += mm;
+                        break;
+                        
+                    case 'bukkit':
+                        let bukkit = `&#${hex.toLowerCase()}`;
+                        if (globalFormatting.bold) bukkit += '&l';
+                        if (globalFormatting.italic) bukkit += '&o';
+                        if (globalFormatting.underline) bukkit += '&n';
+                        if (globalFormatting.strikethrough) bukkit += '&m';
+                        if (globalFormatting.obfuscate) bukkit += '&k';
+                        bukkit += char;
+                        result += bukkit;
+                        break;
+                        
+                    case 'legacy':
+                        let legacy = `§x§${r.charAt(0)}§${r.charAt(1)}§${g.charAt(0)}§${g.charAt(1)}§${b.charAt(0)}§${b.charAt(1)}`;
+                        if (globalFormatting.bold) legacy += '§l';
+                        if (globalFormatting.italic) legacy += '§o';
+                        if (globalFormatting.underline) legacy += '§n';
+                        if (globalFormatting.strikethrough) legacy += '§m';
+                        if (globalFormatting.obfuscate) legacy += '§k';
+                        legacy += char;
+                        result += legacy;
+                        break;
+                        
+                    case 'json':
+                        let jsonObj = {
+                            text: char,
+                            color: color.toLowerCase()
+                        };
+                        if (globalFormatting.bold) jsonObj.bold = true;
+                        if (globalFormatting.italic) jsonObj.italic = true;
+                        if (globalFormatting.underline) jsonObj.underlined = true;
+                        if (globalFormatting.strikethrough) jsonObj.strikethrough = true;
+                        if (globalFormatting.obfuscate) jsonObj.obfuscated = true;
+                        result += JSON.stringify(jsonObj) + ',';
+                        break;
+                        
+                    case 'essentials':
+                        let ess = `&x&${r.charAt(0)}&${r.charAt(1)}&${g.charAt(0)}&${g.charAt(1)}&${b.charAt(0)}&${b.charAt(1)}`;
+                        if (globalFormatting.bold) ess += '&l';
+                        if (globalFormatting.italic) ess += '&o';
+                        if (globalFormatting.underline) ess += '&n';
+                        if (globalFormatting.strikethrough) ess += '&m';
+                        if (globalFormatting.obfuscate) ess += '&k';
+                        ess += char;
+                        result += ess;
+                        break;
+                        
+                    case 'placeholderapi':
+                        let papi = `<#${hex.toLowerCase()}>`;
+                        if (globalFormatting.bold) papi += '&l';
+                        if (globalFormatting.italic) papi += '&o';
+                        if (globalFormatting.underline) papi += '&n';
+                        if (globalFormatting.strikethrough) papi += '&m';
+                        if (globalFormatting.obfuscate) papi += '&k';
+                        papi += char;
+                        result += papi;
+                        break;
+                        
+                    case 'doublehash':
+                        let dhash = `<##${hex.toLowerCase()}>`;
+                        if (globalFormatting.bold) dhash += '&l';
+                        if (globalFormatting.italic) dhash += '&o';
+                        if (globalFormatting.underline) dhash += '&n';
+                        if (globalFormatting.strikethrough) dhash += '&m';
+                        if (globalFormatting.obfuscate) dhash += '&k';
+                        dhash += char;
+                        result += dhash;
+                        break;
+                        
+                    case 'bbcode':
+                        let bbcode = `[COLOR=#${hex.toLowerCase()}]`;
+                        if (globalFormatting.bold) bbcode += '[B]';
+                        if (globalFormatting.italic) bbcode += '[I]';
+                        if (globalFormatting.underline) bbcode += '[U]';
+                        if (globalFormatting.strikethrough) bbcode += '[S]';
+                        bbcode += char;
+                        if (globalFormatting.strikethrough) bbcode += '[/S]';
+                        if (globalFormatting.underline) bbcode += '[/U]';
+                        if (globalFormatting.italic) bbcode += '[/I]';
+                        if (globalFormatting.bold) bbcode += '[/B]';
+                        bbcode += '[/COLOR]';
+                        result += bbcode;
+                        break;
+                }
+            }
+            
+            if (format === 'json') {
+                result = '[' + result.slice(0, -1) + ']';
+            }
+            
+            return result;
+        }
+
+        function copyToClipboard() {
+            const output = document.getElementById('exportOutput');
+            const copyBtn = document.getElementById('copyBtn');
+            
+            navigator.clipboard.writeText(output.textContent).then(() => {
+                copyBtn.textContent = 'Copied!';
+                copyBtn.classList.add('copied');
+                
+                setTimeout(() => {
+                    copyBtn.textContent = 'Copy to Clipboard';
+                    copyBtn.classList.remove('copied');
+                }, 2000);
+            });
+        }
+
+        // Animate obfuscated text
+        setInterval(() => {
+            if (globalFormatting.obfuscate && document.getElementById('previewInput').value) {
+                updatePreview();
+            }
+        }, 100);
+
+        // Initialize the generator
+        init();
+    </script>
+</body>
+</html>

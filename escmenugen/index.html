@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escape Menu Generator - Nautical Hosting</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a237e 0%, #3f51b5 50%, #5c6bc0 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .navbar {
+            background: rgba(26, 35, 126, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 15px 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(26, 35, 126, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .navbar .brand {
+            color: #e8eaf6;
+            font-size: 1.5em;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(232, 234, 246, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(26, 35, 126, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: #1a237e;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #1a237e, #3f51b5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .header p {
+            color: #5c6bc0;
+            font-size: 1.1em;
+            font-weight: 500;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .section {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(26, 35, 126, 0.1);
+            border: 1px solid rgba(26, 35, 126, 0.1);
+        }
+        
+        .section h2 {
+            color: #1a237e;
+            margin-bottom: 20px;
+            font-size: 1.4em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+        }
+        
+        .upload-area {
+            border: 3px dashed #3f51b5;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(232, 234, 246, 0.3);
+        }
+        
+        .upload-area:hover {
+            border-color: #1a237e;
+            background: rgba(232, 234, 246, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        .upload-area.dragover {
+            border-color: #5c6bc0;
+            background: rgba(232, 234, 246, 0.7);
+        }
+        
+        #file-input {
+            display: none;
+        }
+        
+        .canvas-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        #source-canvas, #drawing-canvas {
+            border: 2px solid #9fa8da;
+            border-radius: 8px;
+            margin: 10px;
+            background: white;
+            box-shadow: 0 5px 15px rgba(26, 35, 126, 0.15);
+        }
+        
+        #drawing-canvas {
+            cursor: crosshair;
+            border-color: #3f51b5;
+        }
+        
+        .tools {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(232, 234, 246, 0.5);
+            border-radius: 10px;
+            border: 1px solid rgba(26, 35, 126, 0.1);
+        }
+        
+        .tool-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .tool-group label {
+            font-weight: 600;
+            color: #1a237e;
+        }
+        
+        input[type="color"] {
+            width: 50px;
+            height: 40px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(26, 35, 126, 0.2);
+        }
+        
+        input[type="range"] {
+            width: 120px;
+            accent-color: #3f51b5;
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, #3f51b5, #1a237e);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(63, 81, 181, 0.3);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(63, 81, 181, 0.4);
+        }
+        
+        .btn.secondary {
+            background: linear-gradient(45deg, #9fa8da, #7986cb);
+            box-shadow: 0 4px 15px rgba(159, 168, 218, 0.3);
+        }
+        
+        .btn.danger {
+            background: linear-gradient(45deg, #f44336, #d32f2f);
+            box-shadow: 0 4px 15px rgba(244, 67, 54, 0.3);
+        }
+        
+        .btn.success {
+            background: linear-gradient(45deg, #4caf50, #388e3c);
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+        
+        .pack-info {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(232, 234, 246, 0.5);
+            border-radius: 10px;
+            border-left: 4px solid #3f51b5;
+        }
+        
+        .pack-info h3 {
+            color: #1a237e;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .pack-info input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid rgba(26, 35, 126, 0.2);
+            border-radius: 6px;
+            margin-bottom: 10px;
+            font-size: 1em;
+            background: rgba(255, 255, 255, 0.9);
+        }
+        
+        .pack-info input:focus {
+            outline: none;
+            border-color: #3f51b5;
+            box-shadow: 0 0 0 3px rgba(63, 81, 181, 0.1);
+        }
+        
+        .preview {
+            margin-top: 20px;
+            padding: 20px;
+            background: #1a237e;
+            border-radius: 10px;
+            color: #e8eaf6;
+        }
+        
+        #output-canvas {
+            border: 2px solid #4caf50;
+            border-radius: 8px;
+            background: white;
+            margin: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .icon {
+            width: 20px;
+            height: 20px;
+            display: inline-block;
+            fill: currentColor;
+        }
+        
+        .upload-icon {
+            width: 48px;
+            height: 48px;
+            fill: #3f51b5;
+            margin-bottom: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .tools {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .tool-group {
+                justify-content: space-between;
+            }
+            
+            .navbar .brand {
+                font-size: 1.2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="brand">
+            <svg class="icon" viewBox="0 0 24 24">
+                <path d="M12.74 2.32a1 1 0 0 0-1.48 0L2.86 10.5a1 1 0 0 0-.14 1.05l8 16a1 1 0 0 0 1.76 0l8-16a1 1 0 0 0-.14-1.05L12.74 2.32zM12 4.84L18.3 11H5.7L12 4.84z"/>
+            </svg>
+            Nautical Hosting
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>
+                <svg class="icon" viewBox="0 0 24 24" style="width: 40px; height: 40px;">
+                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-8 14H9v-2h2v2zm0-4H9V7h2v6zm4 4h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+                </svg>
+                Escape Menu Generator
+            </h1>
+            <p>Create custom Minecraft escape menu textures with precision</p>
+        </div>
+        
+        <div class="main-content">
+            <div class="section">
+                <h2>
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+                    </svg>
+                    Load Source Image
+                </h2>
+                <div class="upload-area" id="upload-area">
+                    <svg class="upload-icon" viewBox="0 0 24 24">
+                        <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+                    </svg>
+                    <p>Click or drag & drop your image here</p>
+                    <small>Supported formats: PNG, JPG, GIF</small>
+                </div>
+                <input type="file" id="file-input" accept="image/*">
+                
+                <div class="canvas-container">
+                    <canvas id="source-canvas" width="256" height="256" style="display: none;"></canvas>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path d="M20.71,4.63L19.37,3.29C19,2.9 18.35,2.9 17.96,3.29L9,12.25L11.75,15L20.71,6.04C21.1,5.65 21.1,5 20.71,4.63M7,14A3,3 0 0,0 4,17C4,18.31 2.84,19 2,19C2.92,20.22 4.5,21 6,21A4,4 0 0,0 10,17A3,3 0 0,0 7,14Z"/>
+                    </svg>
+                    Paint Your Texture
+                </h2>
+                <div class="canvas-container">
+                    <canvas id="drawing-canvas" width="256" height="256" style="display: none;"></canvas>
+                </div>
+                
+                <div class="tools">
+                    <div class="tool-group">
+                        <label>Color:</label>
+                        <input type="color" id="brush-color" value="#000000">
+                    </div>
+                    <div class="tool-group">
+                        <label>Size:</label>
+                        <input type="range" id="brush-size" min="1" max="10" value="2">
+                        <span id="size-display">2px</span>
+                    </div>
+                    <button class="btn secondary" id="clear-canvas">
+                        <svg class="icon" viewBox="0 0 24 24" style="width: 16px; height: 16px; margin-right: 5px;">
+                            <path d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z"/>
+                        </svg>
+                        Clear
+                    </button>
+                    <button class="btn secondary" id="fill-canvas">
+                        <svg class="icon" viewBox="0 0 24 24" style="width: 16px; height: 16px; margin-right: 5px;">
+                            <path d="M19,11H13L16.5,7.5L15.08,6.08L9,12.16L10.92,14.08L13,12H19A1,1 0 0,1 20,13A1,1 0 0,1 19,14H13V16H19A3,3 0 0,0 22,13A3,3 0 0,0 19,11M19,4H5C3.89,4 3,4.9 3,6V18A2,2 0 0,0 5,20H19A2,2 0 0,0 21,18V6C21,4.9 20.1,4 19,4Z"/>
+                        </svg>
+                        Fill
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section pack-info">
+            <h3>
+                <svg class="icon" viewBox="0 0 24 24" style="margin-right: 8px;">
+                    <path d="M12,2A3,3 0 0,1 15,5V11A3,3 0 0,1 12,14A3,3 0 0,1 9,11V5A3,3 0 0,1 12,2M19,11C19,14.53 16.39,17.44 13,17.93V21H11V17.93C7.61,17.44 5,14.53 5,11H7A5,5 0 0,0 12,16A5,5 0 0,0 17,11H19Z"/>
+                </svg>
+                Resource Pack Settings
+            </h3>
+            <input type="text" id="pack-name" placeholder="Pack Name (e.g., Custom Escape Menu)" value="Custom Escape Menu Pack">
+            <input type="text" id="pack-description" placeholder="Pack Description" value="Custom escape menu textures created with Nautical Hosting">
+        </div>
+        
+        <div class="section preview">
+            <h3>
+                <svg class="icon" viewBox="0 0 24 24" style="margin-right: 8px;">
+                    <path d="M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17M12,4.5C7,4.5 2.73,7.61 1,12C2.73,16.39 7,19.5 12,19.5C17,19.5 21.27,16.39 23,12C21.27,7.61 17,4.5 12,4.5Z"/>
+                </svg>
+                Preview & Export
+            </h3>
+            <div class="canvas-container">
+                <canvas id="output-canvas" width="256" height="256" style="display: none;"></canvas>
+            </div>
+            <div style="text-align: center; margin-top: 20px;">
+                <button class="btn success" id="generate-pack">
+                    <svg class="icon" viewBox="0 0 24 24" style="width: 18px; height: 18px; margin-right: 8px;">
+                        <path d="M5,20H19V18H5M19,9H15L13,7H9V9H15V11H19M8,5V7H19V5H8Z"/>
+                    </svg>
+                    Generate Resource Pack
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script>
+        class EscapeMenuGenerator {
+            constructor() {
+                this.initElements();
+                this.initEventListeners();
+                this.initCanvas();
+                this.isDrawing = false;
+            }
+            
+            initElements() {
+                this.uploadArea = document.getElementById('upload-area');
+                this.fileInput = document.getElementById('file-input');
+                this.sourceCanvas = document.getElementById('source-canvas');
+                this.drawingCanvas = document.getElementById('drawing-canvas');
+                this.outputCanvas = document.getElementById('output-canvas');
+                this.brushColor = document.getElementById('brush-color');
+                this.brushSize = document.getElementById('brush-size');
+                this.sizeDisplay = document.getElementById('size-display');
+                this.clearBtn = document.getElementById('clear-canvas');
+                this.fillBtn = document.getElementById('fill-canvas');
+                this.generateBtn = document.getElementById('generate-pack');
+                this.packName = document.getElementById('pack-name');
+                this.packDescription = document.getElementById('pack-description');
+                
+                this.sourceCtx = this.sourceCanvas.getContext('2d');
+                this.drawingCtx = this.drawingCanvas.getContext('2d', { willReadFrequently: true });
+                this.outputCtx = this.outputCanvas.getContext('2d');
+            }
+            
+            initEventListeners() {
+                // Upload handling
+                this.uploadArea.addEventListener('click', () => this.fileInput.click());
+                this.uploadArea.addEventListener('dragover', this.handleDragOver.bind(this));
+                this.uploadArea.addEventListener('dragleave', this.handleDragLeave.bind(this));
+                this.uploadArea.addEventListener('drop', this.handleDrop.bind(this));
+                this.fileInput.addEventListener('change', this.handleFileSelect.bind(this));
+                
+                // Drawing events
+                this.drawingCanvas.addEventListener('mousedown', this.startDrawing.bind(this));
+                this.drawingCanvas.addEventListener('mousemove', this.draw.bind(this));
+                this.drawingCanvas.addEventListener('mouseup', this.stopDrawing.bind(this));
+                this.drawingCanvas.addEventListener('mouseout', this.stopDrawing.bind(this));
+                
+                // Tool events
+                this.brushSize.addEventListener('input', this.updateBrushSize.bind(this));
+                this.clearBtn.addEventListener('click', this.clearCanvas.bind(this));
+                this.fillBtn.addEventListener('click', this.fillCanvas.bind(this));
+                this.generateBtn.addEventListener('click', this.generateResourcePack.bind(this));
+                
+                // Color change updates preview
+                this.brushColor.addEventListener('change', this.updatePreview.bind(this));
+            }
+            
+            initCanvas() {
+                // Set up drawing canvas with transparent background for GUI elements
+                this.drawingCtx.clearRect(0, 0, 256, 256);
+                this.drawingCtx.imageSmoothingEnabled = false;
+                
+                // Draw the default Minecraft GUI template
+                this.drawMinecraftGUITemplate();
+                
+                // Set up output canvas
+                this.outputCtx.imageSmoothingEnabled = false;
+            }
+            
+            drawMinecraftGUITemplate() {
+                // Clear canvas
+                this.drawingCtx.clearRect(0, 0, 256, 256);
+                
+                // Draw inventory slots (top row - hotbar style)
+                this.drawingCtx.fillStyle = '#8B8B8B';
+                for (let i = 0; i < 9; i++) {
+                    this.drawSlot(7 + i * 18, 7, 16, 16);
+                }
+                
+                // Draw main inventory grid (3x9)
+                for (let row = 0; row < 3; row++) {
+                    for (let col = 0; col < 9; col++) {
+                        this.drawSlot(7 + col * 18, 83 + row * 18, 16, 16);
+                    }
+                }
+                
+                // Draw crafting grid (2x2)
+                for (let row = 0; row < 2; row++) {
+                    for (let col = 0; col < 2; col++) {
+                        this.drawSlot(97 + col * 18, 17 + row * 18, 16, 16);
+                    }
+                }
+                
+                // Draw crafting result slot
+                this.drawSlot(143, 34, 16, 16);
+                
+                // Draw armor slots (helmet, chestplate, leggings, boots)
+                const armorSlots = [
+                    {x: 7, y: 7, icon: 'helmet'},
+                    {x: 7, y: 25, icon: 'chestplate'},
+                    {x: 7, y: 43, icon: 'leggings'},
+                    {x: 7, y: 61, icon: 'boots'}
+                ];
+                
+                // Draw health/hunger bars background
+                this.drawingCtx.fillStyle = '#000000';
+                this.drawingCtx.fillRect(15, 40, 81, 9);
+                this.drawingCtx.fillRect(15, 50, 81, 9);
+                
+                // Draw experience bar
+                this.drawingCtx.fillStyle = '#374A37';
+                this.drawingCtx.fillRect(15, 64, 81, 5);
+                
+                this.updatePreview();
+            }
+            
+            drawSlot(x, y, width, height) {
+                // Slot background
+                this.drawingCtx.fillStyle = '#373737';
+                this.drawingCtx.fillRect(x, y, width, height);
+                
+                // Slot border (dark)
+                this.drawingCtx.fillStyle = '#1A1A1A';
+                this.drawingCtx.fillRect(x, y, width, 1); // top
+                this.drawingCtx.fillRect(x, y, 1, height); // left
+                
+                // Slot border (light)
+                this.drawingCtx.fillStyle = '#5A5A5A';
+                this.drawingCtx.fillRect(x, y + height - 1, width, 1); // bottom
+                this.drawingCtx.fillRect(x + width - 1, y, 1, height); // right
+            }
+            
+            handleDragOver(e) {
+                e.preventDefault();
+                this.uploadArea.classList.add('dragover');
+            }
+            
+            handleDragLeave(e) {
+                e.preventDefault();
+                this.uploadArea.classList.remove('dragover');
+            }
+            
+            handleDrop(e) {
+                e.preventDefault();
+                this.uploadArea.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    this.loadImage(files[0]);
+                }
+            }
+            
+            handleFileSelect(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    this.loadImage(file);
+                }
+            }
+            
+            loadImage(file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        this.sourceCanvas.style.display = 'block';
+                        this.drawingCanvas.style.display = 'block';
+                        this.outputCanvas.style.display = 'block';
+                        
+                        // Draw source image
+                        this.sourceCtx.clearRect(0, 0, this.sourceCanvas.width, this.sourceCanvas.height);
+                        this.sourceCtx.drawImage(img, 0, 0, this.sourceCanvas.width, this.sourceCanvas.height);
+                        
+                        // Initialize drawing canvas
+                        this.clearCanvas();
+                        this.updatePreview();
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+            
+            startDrawing(e) {
+                this.isDrawing = true;
+                this.draw(e);
+            }
+            
+            draw(e) {
+                if (!this.isDrawing) return;
+                
+                const rect = this.drawingCanvas.getBoundingClientRect();
+                const x = (e.clientX - rect.left) * (this.drawingCanvas.width / rect.width);
+                const y = (e.clientY - rect.top) * (this.drawingCanvas.height / rect.height);
+                
+                this.drawingCtx.globalCompositeOperation = 'source-over';
+                this.drawingCtx.fillStyle = this.brushColor.value;
+                this.drawingCtx.beginPath();
+                this.drawingCtx.arc(x, y, parseInt(this.brushSize.value), 0, 2 * Math.PI);
+                this.drawingCtx.fill();
+                
+                this.updatePreview();
+            }
+            
+            stopDrawing() {
+                this.isDrawing = false;
+            }
+            
+            updateBrushSize() {
+                this.sizeDisplay.textContent = this.brushSize.value + 'px';
+            }
+            
+            clearCanvas() {
+                this.drawMinecraftGUITemplate();
+            }
+            
+            fillCanvas() {
+                // Fill selected areas with brush color
+                this.drawingCtx.fillStyle = this.brushColor.value;
+                // You can customize this to fill specific GUI elements
+                this.drawingCtx.fillRect(0, 0, 256, 256);
+                this.updatePreview();
+            }
+            
+            updatePreview() {
+                // Copy drawing canvas to output canvas
+                this.outputCtx.clearRect(0, 0, 256, 256);
+                this.outputCtx.drawImage(this.drawingCanvas, 0, 0);
+            }
+            
+            async generateResourcePack() {
+                try {
+                    const zip = new JSZip();
+                    
+                    // Create pack.mcmeta
+                    const packMcmeta = {
+                        pack: {
+                            pack_format: 15,
+                            description: this.packDescription.value || "Custom escape menu textures created with Nautical Hosting"
+                        }
+                    };
+                    
+                    zip.file("pack.mcmeta", JSON.stringify(packMcmeta, null, 2));
+                    
+                    // Create directory structure
+                    const texturesFolder = zip.folder("assets").folder("minecraft").folder("textures").folder("gui");
+                    
+                    // Get the drawing canvas as PNG data
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 256;
+                    canvas.height = 256;
+                    const ctx = canvas.getContext('2d');
+                    ctx.imageSmoothingEnabled = false;
+                    ctx.drawImage(this.drawingCanvas, 0, 0);
+                    
+                    // Convert to blob and add to zip
+                    canvas.toBlob(async (blob) => {
+                        const arrayBuffer = await blob.arrayBuffer();
+                        texturesFolder.file("widgets.png", arrayBuffer);
+                        
+                        // Generate and download zip
+                        const content = await zip.generateAsync({ type: "blob" });
+                        const url = URL.createObjectURL(content);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = (this.packName.value || 'Custom Escape Menu Pack').replace(/[^a-z0-9]/gi, '_') + '.zip';
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                        
+                        // Show success message
+                        const originalText = this.generateBtn.innerHTML;
+                        this.generateBtn.innerHTML = `
+                            <svg class="icon" viewBox="0 0 24 24" style="width: 18px; height: 18px; margin-right: 8px;">
+                                <path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/>
+                            </svg>
+                            Pack Generated!
+                        `;
+                        this.generateBtn.style.background = 'linear-gradient(45deg, #4caf50, #388e3c)';
+                        setTimeout(() => {
+                            this.generateBtn.innerHTML = originalText;
+                            this.generateBtn.style.background = 'linear-gradient(45deg, #4caf50, #388e3c)';
+                        }, 2000);
+                    }, 'image/png');
+                    
+                } catch (error) {
+                    console.error('Error generating resource pack:', error);
+                    alert('Error generating resource pack. Please try again.');
+                }
+            }
+        }
+        
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', () => {
+            new EscapeMenuGenerator();
+        });
+    </script>
+</body>
+</html>

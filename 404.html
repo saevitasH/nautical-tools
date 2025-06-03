@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Page Lost in Space | Nautical Hosting</title>
+    <style>
+        :root {
+            --body: #0b1a2f;
+            --secondBG: #1e293b;
+            --thirdBG: #0f172a;
+            --accent: #38bdf8;
+            --mainText: #f8fafc;
+            --text: #cbd5e1;
+            --boxShadow: 0 4px 15px -3px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #0f3460 100%);
+            color: var(--text);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Floating particles animation */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: var(--accent);
+            border-radius: 50%;
+            animation: twinkle 3s infinite alternate;
+        }
+
+        @keyframes twinkle {
+            0% { opacity: 0.3; transform: scale(1); }
+            100% { opacity: 1; transform: scale(1.2); }
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .error-content {
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .error-code {
+            font-size: 8rem;
+            font-weight: 900;
+            color: var(--accent);
+            margin-bottom: 20px;
+            text-shadow: 0 0 30px rgba(56, 189, 248, 0.5);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .spaceship {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 30px;
+            position: relative;
+            animation: hover 2s ease-in-out infinite;
+        }
+
+        @keyframes hover {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-5px) rotate(2deg); }
+        }
+
+        .spaceship svg {
+            width: 100%;
+            height: 100%;
+            fill: var(--accent);
+            filter: drop-shadow(0 0 20px rgba(56, 189, 248, 0.6));
+        }
+
+        .error-title {
+            font-size: 2.5rem;
+            color: var(--mainText);
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .error-message {
+            font-size: 1.2rem;
+            color: var(--text);
+            margin-bottom: 30px;
+            line-height: 1.8;
+        }
+
+        .game-container {
+            background: var(--secondBG);
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 30px 0;
+            box-shadow: var(--boxShadow);
+            position: relative;
+        }
+
+        .game-title {
+            color: var(--mainText);
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .game-info {
+            color: var(--text);
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
+
+        #gameCanvas {
+            width: 100%;
+            max-width: 400px;
+            height: 300px;
+            background: var(--thirdBG);
+            border: 2px solid #334155;
+            border-radius: 8px;
+            display: block;
+            margin: 0 auto;
+            cursor: crosshair;
+        }
+
+        .game-controls {
+            text-align: center;
+            margin-top: 15px;
+            color: var(--text);
+            font-size: 0.8rem;
+        }
+
+        .score {
+            text-align: center;
+            margin-top: 10px;
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: var(--accent);
+            color: #0f172a;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 24px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(56, 189, 248, 0.3);
+        }
+
+        .btn.secondary {
+            background: #475569;
+            color: white;
+        }
+
+        .btn.secondary:hover {
+            box-shadow: 0 8px 25px rgba(71, 85, 105, 0.3);
+        }
+
+        .floating-objects {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .floating-obj {
+            position: absolute;
+            opacity: 0.6;
+            animation: floatAcross 15s linear infinite;
+        }
+
+        @keyframes floatAcross {
+            0% { transform: translateX(-100px) rotate(0deg); }
+            100% { transform: translateX(calc(100vw + 100px)) rotate(360deg); }
+        }
+
+        .easter-egg-hint {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid var(--accent);
+            border-radius: 8px;
+            padding: 10px 15px;
+            color: var(--accent);
+            font-size: 0.8rem;
+            animation: pulse 2s infinite;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+
+        @media (max-width: 600px) {
+            .error-code {
+                font-size: 5rem;
+            }
+            .error-title {
+                font-size: 2rem;
+            }
+            .error-message {
+                font-size: 1rem;
+            }
+            .button-group {
+                flex-direction: column;
+                align-items: center;
+            }
+            .btn {
+                width: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Stars Background -->
+    <div class="stars" id="stars"></div>
+    
+    <!-- Floating Objects -->
+    <div class="floating-objects" id="floatingObjects"></div>
+
+    <div class="container">
+        <div class="error-content">
+            <div class="error-code">404</div>
+            
+            <div class="spaceship">
+                <svg viewBox="0 0 100 100">
+                    <path d="M50 10 L60 30 L85 35 L60 40 L50 60 L40 40 L15 35 L40 30 Z"/>
+                    <circle cx="50" cy="35" r="8" fill="#0f172a"/>
+                    <path d="M45 70 L50 90 L55 70" stroke="currentColor" stroke-width="2" fill="none"/>
+                </svg>
+            </div>
+
+            <h1 class="error-title">Houston, We Have a Problem!</h1>
+            <p class="error-message">
+                The page you're looking for has drifted off into deep space. 
+                While our space engineers work to retrieve it, why not try our asteroid dodging simulator?
+            </p>
+
+            <div class="game-container">
+                <h2 class="game-title">🚀 Space Rescue Mission</h2>
+                <p class="game-info">Help the spaceship navigate through the asteroid field!</p>
+                <canvas id="gameCanvas" width="400" height="300"></canvas>
+                <div class="game-controls">Use your mouse to pilot the ship • Avoid the asteroids</div>
+                <div class="score" id="score">Score: 0</div>
+            </div>
+
+            <div class="button-group">
+                <a href="https://tools.nauticalhosting.org" class="btn">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+                    </svg>
+                    Return to Base
+                </a>
+                <button class="btn secondary" onclick="location.reload()">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                        <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+                    </svg>
+                    Try Again
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="easter-egg-hint" onclick="activateSecretMode()">
+        🎮 Click for secret mode!
+    </div>
+
+    <script>
+        // Create animated stars
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            for (let i = 0; i < 100; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                starsContainer.appendChild(star);
+            }
+        }
+
+        // Create floating objects
+        function createFloatingObjects() {
+            const container = document.getElementById('floatingObjects');
+            const objects = ['🛸', '🌟', '🌙', '☄️', '🚀'];
+            
+            setInterval(() => {
+                const obj = document.createElement('div');
+                obj.className = 'floating-obj';
+                obj.textContent = objects[Math.floor(Math.random() * objects.length)];
+                obj.style.top = Math.random() * 100 + '%';
+                obj.style.fontSize = (Math.random() * 20 + 15) + 'px';
+                obj.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                container.appendChild(obj);
+                
+                setTimeout(() => {
+                    if (obj.parentNode) {
+                        obj.parentNode.removeChild(obj);
+                    }
+                }, 20000);
+            }, 3000);
+        }
+
+        // Game Logic
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreEl = document.getElementById('score');
+
+        let game = {
+            player: { x: 50, y: 250, size: 15 },
+            asteroids: [],
+            score: 0,
+            gameSpeed: 2,
+            isRunning: true,
+            secretMode: false
+        };
+
+        // Mouse tracking
+        let mouseX = game.player.x;
+        let mouseY = game.player.y;
+
+        canvas.addEventListener('mousemove', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            mouseX = (e.clientX - rect.left) * (canvas.width / rect.width);
+            mouseY = (e.clientY - rect.top) * (canvas.height / rect.height);
+        });
+
+        function createAsteroid() {
+            return {
+                x: canvas.width,
+                y: Math.random() * (canvas.height - 40) + 20,
+                size: Math.random() * 20 + 15,
+                speed: game.gameSpeed + Math.random() * 2,
+                rotation: 0,
+                rotationSpeed: (Math.random() - 0.5) * 0.2
+            };
+        }
+
+        function drawPlayer() {
+            ctx.save();
+            ctx.translate(game.player.x, game.player.y);
+            
+            if (game.secretMode) {
+                // Rainbow spaceship
+                const gradient = ctx.createLinearGradient(-15, -10, 15, 10);
+                gradient.addColorStop(0, '#ff0080');
+                gradient.addColorStop(0.5, '#00ff80');
+                gradient.addColorStop(1, '#8000ff');
+                ctx.fillStyle = gradient;
+            } else {
+                ctx.fillStyle = '#38bdf8';
+            }
+            
+            // Draw spaceship
+            ctx.beginPath();
+            ctx.moveTo(15, 0);
+            ctx.lineTo(-10, -8);
+            ctx.lineTo(-5, 0);
+            ctx.lineTo(-10, 8);
+            ctx.closePath();
+            ctx.fill();
+            
+            // Engine trail
+            if (game.secretMode) {
+                ctx.fillStyle = '#ff4080';
+            } else {
+                ctx.fillStyle = '#06b6d4';
+            }
+            ctx.fillRect(-15, -3, -8, 6);
+            
+            ctx.restore();
+        }
+
+        function drawAsteroid(asteroid) {
+            ctx.save();
+            ctx.translate(asteroid.x, asteroid.y);
+            ctx.rotate(asteroid.rotation);
+            
+            if (game.secretMode) {
+                ctx.fillStyle = '#ff6b9d';
+            } else {
+                ctx.fillStyle = '#64748b';
+            }
+            
+            // Draw irregular asteroid
+            ctx.beginPath();
+            for (let i = 0; i < 8; i++) {
+                const angle = (i / 8) * Math.PI * 2;
+                const radius = asteroid.size * (0.8 + Math.sin(angle) * 0.2);
+                const x = Math.cos(angle) * radius;
+                const y = Math.sin(angle) * radius;
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.closePath();
+            ctx.fill();
+            ctx.restore();
+        }
+
+        function checkCollision(player, asteroid) {
+            const dx = player.x - asteroid.x;
+            const dy = player.y - asteroid.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            return distance < (player.size + asteroid.size * 0.8);
+        }
+
+        function updateGame() {
+            if (!game.isRunning) return;
+
+            // Move player towards mouse
+            const dx = mouseX - game.player.x;
+            const dy = mouseY - game.player.y;
+            game.player.x += dx * 0.1;
+            game.player.y += dy * 0.1;
+
+            // Keep player in bounds
+            game.player.x = Math.max(20, Math.min(canvas.width - 20, game.player.x));
+            game.player.y = Math.max(20, Math.min(canvas.height - 20, game.player.y));
+
+            // Create asteroids
+            if (Math.random() < 0.02) {
+                game.asteroids.push(createAsteroid());
+            }
+
+            // Update asteroids
+            for (let i = game.asteroids.length - 1; i >= 0; i--) {
+                const asteroid = game.asteroids[i];
+                asteroid.x -= asteroid.speed;
+                asteroid.rotation += asteroid.rotationSpeed;
+
+                if (asteroid.x < -asteroid.size) {
+                    game.asteroids.splice(i, 1);
+                    game.score += 10;
+                    if (game.score % 100 === 0) {
+                        game.gameSpeed += 0.5;
+                    }
+                } else if (checkCollision(game.player, asteroid)) {
+                    // Game over effect
+                    game.isRunning = false;
+                    setTimeout(() => {
+                        game.isRunning = true;
+                        game.asteroids = [];
+                        game.score = 0;
+                        game.gameSpeed = 2;
+                        game.player.x = 50;
+                        game.player.y = 250;
+                    }, 2000);
+                }
+            }
+
+            scoreEl.textContent = `Score: ${game.score}`;
+        }
+
+        function draw() {
+            // Clear canvas
+            if (game.secretMode) {
+                const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+                gradient.addColorStop(0, '#1a0033');
+                gradient.addColorStop(1, '#330066');
+                ctx.fillStyle = gradient;
+            } else {
+                ctx.fillStyle = '#0f172a';
+            }
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw game objects
+            drawPlayer();
+            game.asteroids.forEach(drawAsteroid);
+
+            // Game over message
+            if (!game.isRunning) {
+                ctx.fillStyle = '#ef4444';
+                ctx.font = '24px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('COLLISION!', canvas.width/2, canvas.height/2 - 20);
+                ctx.fillStyle = '#38bdf8';
+                ctx.font = '16px Arial';
+                ctx.fillText('Restarting...', canvas.width/2, canvas.height/2 + 10);
+            }
+        }
+
+        function gameLoop() {
+            updateGame();
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+
+        function activateSecretMode() {
+            game.secretMode = !game.secretMode;
+            const hint = document.querySelector('.easter-egg-hint');
+            hint.textContent = game.secretMode ? '🌈 Rainbow mode ON!' : '🎮 Click for secret mode!';
+            
+            if (game.secretMode) {
+                document.body.style.background = 'linear-gradient(135deg, #ff0080 0%, #8000ff 50%, #00ff80 100%)';
+                setTimeout(() => {
+                    hint.textContent = '🎮 Click for secret mode!';
+                    if (game.secretMode) {
+                        document.body.style.background = 'linear-gradient(135deg, #0f172a 0%, #0f3460 100%)';
+                        game.secretMode = false;
+                    }
+                }, 10000);
+            }
+        }
+
+        // Initialize
+        createStars();
+        createFloatingObjects();
+        gameLoop();
+
+        // Add some fun console messages for developers
+        console.log('🚀 Welcome to the Nautical Hosting 404 page!');
+        console.log('🎮 Try the secret mode by clicking the hint!');
+        console.log('⭐ Can you beat a score of 500 in the asteroid game?');
+    </script>
+</body>
+</html>

@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Custom Item Texture Pack Generator</title>
+  <style>
+    :root {
+      --body: #0b1a2f;
+      --secondBG: #1e293b;
+      --thirdBG: #0f172a;
+      --accent: #38bdf8;
+      --mainText: #f8fafc;
+      --text: #cbd5e1;
+      --boxShadow: 0 4px 15px -3px rgba(0, 0, 0, 0.3);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(135deg, #0f172a 0%, #0f3460 100%);
+      color: var(--text);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      min-height: 100vh;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    header {
+      width: 100%;
+      background-color: rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(10px);
+      padding: 20px 0;
+      text-align: center;
+      border-bottom: 1px solid #334155;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 10px;
+    }
+
+    .logo svg {
+      width: 36px;
+      height: 36px;
+      fill: var(--accent);
+    }
+
+    h1 {
+      font-weight: 700;
+      font-size: 2.2rem;
+      color: var(--mainText);
+    }
+
+    .tagline {
+      color: var(--accent);
+      font-size: 1rem;
+      margin-bottom: 15px;
+    }
+
+    main {
+      max-width: 1000px;
+      width: 100%;
+      padding: 30px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    .card {
+      background: var(--secondBG);
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 25px;
+      box-shadow: var(--boxShadow);
+    }
+
+    .card h2 {
+      color: var(--mainText);
+      margin-bottom: 15px;
+      font-size: 1.4rem;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 10px;
+    }
+
+    .upload-area {
+      border: 2px dashed #475569;
+      border-radius: 8px;
+      padding: 40px;
+      text-align: center;
+      transition: all 0.3s;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .upload-area.drag-over {
+      border-color: var(--accent);
+      background: rgba(56, 189, 248, 0.1);
+    }
+
+    .upload-area:hover {
+      border-color: var(--accent);
+    }
+
+    .upload-icon {
+      width: 48px;
+      height: 48px;
+      margin: 0 auto 15px;
+      color: var(--accent);
+    }
+
+    .upload-text {
+      color: var(--mainText);
+      font-size: 1.1rem;
+      margin-bottom: 10px;
+    }
+
+    .upload-subtext {
+      color: var(--text);
+      font-size: 0.9rem;
+    }
+
+    #fileInput {
+      display: none;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-size: 1rem;
+      color: var(--mainText);
+      margin-bottom: 8px;
+    }
+
+    input[type="text"], input[type="number"], select {
+      width: 100%;
+      padding: 12px;
+      font-size: 1rem;
+      border: 1px solid #475569;
+      border-radius: 6px;
+      background: var(--thirdBG);
+      color: var(--mainText);
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    select {
+      cursor: pointer;
+    }
+
+    input[type="text"]:focus, input[type="number"]:focus, select:focus {
+      border-color: var(--accent);
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.25);
+    }
+
+    .items-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .item-entry {
+      background: var(--thirdBG);
+      border: 1px solid #475569;
+      border-radius: 8px;
+      padding: 20px;
+      position: relative;
+    }
+
+    .item-entry h3 {
+      color: var(--mainText);
+      margin-bottom: 15px;
+      font-size: 1.2rem;
+    }
+
+    .remove-item-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #ef4444;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      transition: all 0.2s;
+    }
+
+    .remove-item-btn:hover {
+      background: #dc2626;
+    }
+
+    .item-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+
+    .preview-container {
+      margin-top: 15px;
+      text-align: center;
+      display: none;
+    }
+
+    .preview-image {
+      max-width: 100px;
+      max-height: 100px;
+      border-radius: 8px;
+      border: 2px solid #475569;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><rect width="10" height="10" fill="%23f0f0f0"/><rect x="10" y="10" width="10" height="10" fill="%23f0f0f0"/><rect x="0" y="10" width="10" height="10" fill="%23e0e0e0"/><rect x="10" y="0" width="10" height="10" fill="%23e0e0e0"/></svg>');
+    }
+
+    .preview-info {
+      margin-top: 5px;
+      color: var(--text);
+      font-size: 0.8rem;
+    }
+
+    .command-list {
+      background: var(--thirdBG);
+      border: 1px solid #475569;
+      border-radius: 8px;
+      padding: 15px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+      color: var(--mainText);
+      margin-top: 15px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .command-item {
+      margin-bottom: 10px;
+      padding: 8px;
+      background: rgba(56, 189, 248, 0.1);
+      border-radius: 4px;
+      word-break: break-all;
+    }
+
+    .copy-btn {
+      background: var(--accent);
+      color: #0f172a;
+      border: none;
+      border-radius: 4px;
+      padding: 8px 16px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      margin-top: 10px;
+      transition: all 0.2s;
+    }
+
+    .copy-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(56, 189, 248, 0.25);
+    }
+
+    button {
+      background: var(--accent);
+      color: #0f172a;
+      font-weight: 600;
+      border: none;
+      border-radius: 6px;
+      padding: 12px 20px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    button.secondary {
+      background: #475569;
+      color: white;
+    }
+
+    button.add-item {
+      background: #22c55e;
+      color: white;
+      width: 100%;
+      margin-top: 20px;
+    }
+
+    button:disabled {
+      background: #374151;
+      color: #9ca3af;
+      cursor: not-allowed;
+    }
+
+    button:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(56, 189, 248, 0.25);
+    }
+
+    button.secondary:hover:not(:disabled) {
+      box-shadow: 0 4px 12px rgba(71, 85, 105, 0.25);
+    }
+
+    button.add-item:hover:not(:disabled) {
+      box-shadow: 0 4px 12px rgba(34, 197, 94, 0.25);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    button svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .status-message {
+      padding: 15px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    .status-message.success {
+      background: rgba(34, 197, 94, 0.1);
+      border: 1px solid #22c55e;
+      color: #22c55e;
+    }
+
+    .status-message.error {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid #ef4444;
+      color: #ef4444;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: var(--thirdBG);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 10px;
+      display: none;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--accent);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .info-box {
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid var(--accent);
+      border-radius: 8px;
+      padding: 15px;
+      margin-top: 15px;
+    }
+
+    .info-box h3 {
+      color: var(--accent);
+      margin-bottom: 10px;
+      font-size: 1.1rem;
+    }
+
+    .info-box p {
+      color: var(--text);
+      font-size: 0.9rem;
+      margin-bottom: 5px;
+    }
+
+    footer {
+      width: 100%;
+      background-color: rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(10px);
+      padding: 20px 0;
+      text-align: center;
+      border-top: 1px solid #334155;
+      margin-top: auto;
+    }
+
+    footer p {
+      color: var(--text);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 768px) {
+      .card {
+        padding: 20px;
+      }
+      
+      .button-group {
+        flex-direction: column;
+      }
+      
+      .item-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+      </svg>
+      <h1>Custom Item Generator</h1>
+    </div>
+    <p class="tagline">Create Custom Items with Multiple Textures</p>
+  </header>
+
+  <main>
+    <div class="card">
+      <h2>Pack Configuration</h2>
+      <div class="form-group">
+        <label for="packName">Pack Name:</label>
+        <input type="text" id="packName" value="Custom Items Pack" placeholder="Enter pack name..." />
+      </div>
+      
+      <div class="form-group">
+        <label for="packDescription">Pack Description:</label>
+        <input type="text" id="packDescription" value="Custom item textures" placeholder="Enter pack description..." />
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Custom Items</h2>
+      <div id="statusMessage" class="status-message"></div>
+      
+      <div class="items-container" id="itemsContainer">
+      </div>
+      
+      <button class="add-item" onclick="addNewItem()">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+        </svg>
+        Add New Item
+      </button>
+      
+      <div class="progress-bar" id="progressBar">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      
+      <div class="button-group">
+        <button id="clearAllBtn" onclick="clearAllItems()" class="secondary">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+          </svg>
+          Clear All Items
+        </button>
+        
+        <button id="generateBtn" onclick="generatePack()">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+          </svg>
+          Generate Pack & Commands
+        </button>
+      </div>
+    </div>
+
+    <div class="card" id="commandCard" style="display: none;">
+      <h2>Minecraft Commands</h2>
+      <p style="color: var(--text); margin-bottom: 15px;">Use these commands in Minecraft to get your custom items:</p>
+      <div class="command-list" id="commandList"></div>
+      <button class="copy-btn" onclick="copyAllCommands()">Copy All Commands</button>
+      
+      <div class="info-box">
+        <h3>How to Use:</h3>
+        <p>1. Download and install the generated resource pack</p>
+        <p>2. Run any of the commands above in your Minecraft world (requires op permissions)</p>
+        <p>3. Your custom items will appear in your inventory!</p>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Custom Item Generator. Create amazing custom items for Minecraft!</p>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script>
+    let items = [];
+    let currentCustomModelData = 1001;
+    let itemIdCounter = 0;
+
+    const statusMessage = document.getElementById('statusMessage');
+    const progressBar = document.getElementById('progressBar');
+    const progressFill = document.getElementById('progressFill');
+    const generateBtn = document.getElementById('generateBtn');
+    const itemsContainer = document.getElementById('itemsContainer');
+    const commandCard = document.getElementById('commandCard');
+    const commandList = document.getElementById('commandList');
+
+    function addNewItem() {
+      const itemId = itemIdCounter++;
+      const item = {
+        id: itemId,
+        baseItem: 'minecraft:carrot_on_a_stick',
+        customName: 'Custom Item',
+        image: null,
+        customModelData: currentCustomModelData++
+      };
+      
+      items.push(item);
+      renderItem(item);
+      updateGenerateButton();
+    }
+
+    function renderItem(item) {
+      const itemDiv = document.createElement('div');
+      itemDiv.className = 'item-entry';
+      itemDiv.id = `item-${item.id}`;
+      
+      itemDiv.innerHTML = `
+        <button class="remove-item-btn" onclick="removeItem(${item.id})">&times;</button>
+        <h3>Item ${item.id + 1}</h3>
+        
+        <div class="item-row">
+          <div class="form-group">
+            <label>Base Item (minecraft:):</label>
+            <input type="text" 
+                   value="${item.baseItem.replace('minecraft:', '')}" 
+                   placeholder="carrot_on_a_stick" 
+                   onchange="updateItemBaseItem(${item.id}, this.value)" />
+          </div>
+          
+          <div class="form-group">
+            <label>Custom Item Name:</label>
+            <input type="text" 
+                   value="${item.customName}" 
+                   placeholder="Enter display name..." 
+                   onchange="updateItemName(${item.id}, this.value)" />
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label>Item Texture:</label>
+          <div class="upload-area" onclick="selectImageForItem(${item.id})">
+            <svg class="upload-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 32px; height: 32px;">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+            </svg>
+            <div class="upload-text">Click to upload PNG texture</div>
+            <div class="upload-subtext">16x16 PNG recommended</div>
+          </div>
+          
+          <div class="preview-container" id="preview-${item.id}" style="display: none;">
+            <img id="preview-img-${item.id}" class="preview-image" alt="Preview" />
+            <div class="preview-info" id="preview-info-${item.id}"></div>
+          </div>
+        </div>
+        
+        <input type="file" id="file-${item.id}" accept=".png" style="display: none;" onchange="handleImageUpload(${item.id}, this)" />
+      `;
+      
+      itemsContainer.appendChild(itemDiv);
+    }
+
+    function removeItem(itemId) {
+      items = items.filter(item => item.id !== itemId);
+      document.getElementById(`item-${itemId}`).remove();
+      updateGenerateButton();
+    }
+
+    function clearAllItems() {
+      items = [];
+      itemsContainer.innerHTML = '';
+      commandCard.style.display = 'none';
+      updateGenerateButton();
+      showStatus('All items cleared', 'success');
+    }
+
+    function selectImageForItem(itemId) {
+      document.getElementById(`file-${itemId}`).click();
+    }
+
+    function handleImageUpload(itemId, input) {
+      const file = input.files[0];
+      if (file && file.type === 'image/png') {
+        const item = items.find(i => i.id === itemId);
+        if (item) {
+          item.image = file;
+          showPreview(itemId, file);
+          updateGenerateButton();
+          showStatus(`Image uploaded for Item ${itemId + 1}!`, 'success');
+        }
+      } else {
+        showStatus('Please upload a PNG file', 'error');
+      }
+    }
+
+    function showPreview(itemId, file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const previewImg = document.getElementById(`preview-img-${itemId}`);
+        const previewInfo = document.getElementById(`preview-info-${itemId}`);
+        const previewContainer = document.getElementById(`preview-${itemId}`);
+        
+        previewImg.src = e.target.result;
+        previewInfo.textContent = `${file.name} (${formatFileSize(file.size)})`;
+        previewContainer.style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function updateItemBaseItem(itemId, value) {
+      const item = items.find(i => i.id === itemId);
+      if (item) {
+        item.baseItem = value.startsWith('minecraft:') ? value : `minecraft:${value}`;
+      }
+    }
+
+    function updateItemName(itemId, value) {
+      const item = items.find(i => i.id === itemId);
+      if (item) {
+        item.customName = value;
+      }
+    }
+
+    function updateGenerateButton() {
+      const hasValidItems = items.some(item => item.image);
+      generateBtn.disabled = !hasValidItems;
+    }
+
+    function formatFileSize(bytes) {
+      if (bytes === 0) return '0 Bytes';
+      const k = 1024;
+      const sizes = ['Bytes', 'KB', 'MB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+    function showStatus(message, type) {
+      statusMessage.textContent = message;
+      statusMessage.className = `status-message ${type}`;
+      statusMessage.style.display = 'block';
+      
+      setTimeout(() => {
+        statusMessage.style.display = 'none';
+      }, 5000);
+    }
+
+    function updateProgress(percent) {
+      progressFill.style.width = percent + '%';
+      if (percent > 0) {
+        progressBar.style.display = 'block';
+      } else {
+        progressBar.style.display = 'none';
+      }
+    }
+
+    async function resizeImage(file, targetSize = 16) {
+      return new Promise((resolve) => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        const img = new Image();
+        
+        img.onload = function() {
+          canvas.width = targetSize;
+          canvas.height = targetSize;
+          
+          ctx.imageSmoothingEnabled = false;
+          ctx.drawImage(img, 0, 0, targetSize, targetSize);
+          
+          canvas.toBlob(resolve, 'image/png');
+        };
+        
+        img.src = URL.createObjectURL(file);
+      });
+    }
+
+    async function generatePack() {
+      const validItems = items.filter(item => item.image);
+      
+      if (validItems.length === 0) {
+        showStatus('Please add at least one item with an image', 'error');
+        return;
+      }
+
+      generateBtn.disabled = true;
+      updateProgress(10);
+      showStatus('Generating texture pack...', 'success');
+
+      try {
+        const zip = new JSZip();
+        
+        const packMeta = {
+          pack: {
+            pack_format: 15,
+            description: document.getElementById('packDescription').value
+          }
+        };
+        
+        zip.file('pack.mcmeta', JSON.stringify(packMeta, null, 2));
+        updateProgress(20);
+
+        const defaultIcon = await createPackIcon();
+        zip.file('pack.png', defaultIcon);
+        updateProgress(30);
+
+        const commands = [];
+        const totalItems = validItems.length;
+        let processedItems = 0;
+
+        for (const item of validItems) {
+          const itemType = item.baseItem.replace('minecraft:', '');
+          const resizedImage = await resizeImage(item.image, 16);
+          
+          const itemModel = {
+            parent: "item/generated",
+            textures: {
+              layer0: `minecraft:item/${itemType}`
+            },
+            overrides: [
+              {
+                predicate: {
+                  custom_model_data: item.customModelData
+                },
+                model: `minecraft:item/${itemType}_custom_${item.customModelData}`
+              }
+            ]
+          };
+
+          const customItemModel = {
+            parent: "item/generated",
+            textures: {
+              layer0: `minecraft:item/${itemType}_custom_${item.customModelData}`
+            }
+          };
+
+          zip.file(`assets/minecraft/models/item/${itemType}.json`, JSON.stringify(itemModel, null, 2));
+          zip.file(`assets/minecraft/models/item/${itemType}_custom_${item.customModelData}.json`, JSON.stringify(customItemModel, null, 2));
+          zip.file(`assets/minecraft/textures/item/${itemType}_custom_${item.customModelData}.png`, resizedImage);
+
+          const command = `/give @s ${item.baseItem}{CustomModelData:${item.customModelData},display:{Name:'{"text":"${item.customName}","italic":false}'}} 1`;
+          commands.push({
+            item: item.customName,
+            command: command
+          });
+
+          processedItems++;
+          updateProgress(30 + (processedItems / totalItems) * 50);
+        }
+
+        commandList.innerHTML = commands.map(cmd => 
+          `<div class="command-item">
+            <strong>${cmd.item}:</strong><br>
+            ${cmd.command}
+          </div>`
+        ).join('');
+        
+        commandCard.style.display = 'block';
+        updateProgress(90);
+
+        const content = await zip.generateAsync({ type: "blob" });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(content);
+        link.download = `${document.getElementById('packName').value.replace(/\s+/g, '_')}_texture_pack.zip`;
+        link.click();
+        
+        updateProgress(100);
+        showStatus(`Texture pack generated with ${validItems.length} custom items!`, 'success');
+        
+        setTimeout(() => {
+          updateProgress(0);
+        }, 2000);
+
+      } catch (error) {
+        console.error('Error generating pack:', error);
+        showStatus('Error generating texture pack: ' + error.message, 'error');
+        updateProgress(0);
+      } finally {
+        generateBtn.disabled = false;
+      }
+    }
+
+    async function createPackIcon() {
+      return new Promise((resolve) => {
+        const canvas = document.createElement('canvas');
+        canvas.width = 64;
+        canvas.height = 64;
+        const ctx = canvas.getContext('2d');
+        
+        const gradient = ctx.createLinearGradient(0, 0, 64, 64);
+        gradient.addColorStop(0, '#38bdf8');
+        gradient.addColorStop(1, '#0f172a');
+        
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, 64, 64);
+        
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.moveTo(32, 16);
+        ctx.lineTo(48, 32);
+        ctx.lineTo(32, 48);
+        ctx.lineTo(16, 32);
+        ctx.closePath();
+        ctx.fill();
+        
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(1, 1, 62, 62);
+        
+        canvas.toBlob(resolve, 'image/png');
+      });
+    }
+
+    function copyAllCommands() {
+      const commands = Array.from(document.querySelectorAll('.command-item')).map(item => 
+        item.textContent.split(':')[1].trim()
+      ).join('\n');
+      
+      navigator.clipboard.writeText(commands).then(() => {
+        showStatus('All commands copied to clipboard!', 'success');
+      }).catch(() => {
+        const textArea = document.createElement('textarea');
+        textArea.value = commands;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        showStatus('All commands copied to clipboard!', 'success');
+      });
+    }
+
+    addNewItem();
+    updateGenerateButton();
+  </script>
+</body>
+</html>

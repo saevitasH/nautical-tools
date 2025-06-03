@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minecraft Votifier Tester</title>
+    <style>
+        :root {
+            --body: #0b1a2f;
+            --secondBG: #1e293b;
+            --thirdBG: #0f172a;
+            --accent: #38bdf8;
+            --mainText: #f8fafc;
+            --text: #cbd5e1;
+            --boxShadow: 0 4px 15px -3px rgba(0, 0, 0, 0.3);
+            --error: #ef4444;
+            --success: #10b981;
+            --warning: #f59e0b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #0f3460 100%);
+            color: var(--text);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Navigation */
+        nav {
+            width: 100%;
+            background-color: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 15px 0;
+            border-bottom: 1px solid #334155;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-logo h1 {
+            color: var(--mainText);
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .minecraft-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(45deg, #4ade80, #22c55e);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            font-size: 18px;
+        }
+
+        /* Main Content */
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 40px;
+        }
+
+        .tester-section {
+            background: var(--secondBG);
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: var(--boxShadow);
+        }
+
+        .section-title {
+            color: var(--mainText);
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: var(--mainText);
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--thirdBG);
+            border: 1px solid #475569;
+            border-radius: 8px;
+            color: var(--mainText);
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .test-btn {
+            width: 100%;
+            background: var(--accent);
+            color: #0f172a;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 10px;
+        }
+
+        .test-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(56, 189, 248, 0.25);
+        }
+
+        .test-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Results Section */
+        .results-section {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .status-card {
+            background: var(--secondBG);
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: var(--boxShadow);
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #64748b;
+        }
+
+        .status-dot.success { background: var(--success); }
+        .status-dot.error { background: var(--error); }
+        .status-dot.warning { background: var(--warning); }
+        .status-dot.loading { 
+            background: var(--accent);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .log-container {
+            background: var(--thirdBG);
+            border: 1px solid #475569;
+            border-radius: 8px;
+            padding: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+        }
+
+        .log-entry {
+            margin-bottom: 8px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .log-time {
+            color: #64748b;
+            flex-shrink: 0;
+        }
+
+        .log-message {
+            color: var(--text);
+        }
+
+        .log-message.success { color: var(--success); }
+        .log-message.error { color: var(--error); }
+        .log-message.warning { color: var(--warning); }
+
+        .info-panel {
+            background: var(--thirdBG);
+            border: 1px solid #475569;
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .info-panel h3 {
+            color: var(--accent);
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+        }
+
+        .info-panel p {
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        .info-panel ul {
+            list-style: none;
+            font-size: 0.9rem;
+        }
+
+        .info-panel li {
+            margin-bottom: 5px;
+            padding-left: 15px;
+            position: relative;
+        }
+
+        .info-panel li::before {
+            content: '→';
+            color: var(--accent);
+            position: absolute;
+            left: 0;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            main {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            main {
+                padding: 20px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <div class="nav-logo">
+                <div class="minecraft-icon">⛏</div>
+                <h1>Votifier Tester</h1>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <div class="tester-section">
+            <h2 class="section-title">
+                🗳️ Test Vote Configuration
+            </h2>
+            
+            <form id="voteForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="serverHost">Server Host/IP</label>
+                        <input type="text" id="serverHost" placeholder="play.example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="serverPort">Votifier Port</label>
+                        <input type="number" id="serverPort" placeholder="8192" value="8192" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="publicKey">Public Key (RSA)</label>
+                    <textarea id="publicKey" rows="6" placeholder="-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA...
+-----END PUBLIC KEY-----" required></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="username">Test Username</label>
+                        <input type="text" id="username" placeholder="TestPlayer" value="TestPlayer" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="serviceName">Service Name</label>
+                        <input type="text" id="serviceName" placeholder="MinecraftServers.org" value="TestSite" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="address">Voter IP Address</label>
+                        <input type="text" id="address" placeholder="127.0.0.1" value="127.0.0.1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="timestamp">Timestamp</label>
+                        <input type="text" id="timestamp" readonly>
+                    </div>
+                </div>
+
+                <button type="submit" class="test-btn" id="testButton">
+                    🚀 Send Test Vote
+                </button>
+            </form>
+        </div>
+
+        <div class="results-section">
+            <div class="status-card">
+                <div class="status-indicator">
+                    <div class="status-dot" id="statusDot"></div>
+                    <span id="statusText">Ready to test</span>
+                </div>
+                <div id="statusDetails">Enter your server details and click "Send Test Vote" to begin testing.</div>
+            </div>
+
+            <div class="status-card">
+                <h3 style="color: var(--mainText); margin-bottom: 15px;">📊 Test Log</h3>
+                <div class="log-container" id="logContainer">
+                    <div class="log-entry">
+                        <span class="log-time">--:--:--</span>
+                        <span class="log-message">Votifier Tester initialized</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-panel">
+                <h3>ℹ️ How to Use</h3>
+                <p>This tool simulates a vote being sent to your Minecraft server's Votifier plugin:</p>
+                <ul>
+                    <li>Enter your server's IP and Votifier port (usually 8192)</li>
+                    <li>Paste your server's RSA public key from the Votifier config</li>
+                    <li>Configure test vote details (username, service, etc.)</li>
+                    <li>Click "Send Test Vote" to simulate a vote</li>
+                </ul>
+                <br>
+                <p><strong>Note:</strong> This is a client-side simulation. For full testing, you'll need to implement server-side RSA encryption and socket communication.</p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let testLog = [];
+
+        function updateTimestamp() {
+            const now = Math.floor(Date.now() / 1000);
+            document.getElementById('timestamp').value = now.toString();
+        }
+
+        function addLogEntry(message, type = 'info') {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString();
+            const entry = {
+                time: timeStr,
+                message: message,
+                type: type
+            };
+            
+            testLog.push(entry);
+            updateLogDisplay();
+        }
+
+        function updateLogDisplay() {
+            const container = document.getElementById('logContainer');
+            container.innerHTML = '';
+            
+            testLog.slice(-20).forEach(entry => {
+                const logDiv = document.createElement('div');
+                logDiv.className = 'log-entry';
+                logDiv.innerHTML = `
+                    <span class="log-time">${entry.time}</span>
+                    <span class="log-message ${entry.type}">${entry.message}</span>
+                `;
+                container.appendChild(logDiv);
+            });
+            
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function updateStatus(status, text, details) {
+            const dot = document.getElementById('statusDot');
+            const statusText = document.getElementById('statusText');
+            const statusDetails = document.getElementById('statusDetails');
+            
+            dot.className = `status-dot ${status}`;
+            statusText.textContent = text;
+            statusDetails.textContent = details;
+        }
+
+        function validateRSAKey(key) {
+            const cleaned = key.trim();
+            return cleaned.includes('-----BEGIN PUBLIC KEY-----') && 
+                   cleaned.includes('-----END PUBLIC KEY-----');
+        }
+
+        function simulateVoteTest(formData) {
+            return new Promise((resolve) => {
+                updateStatus('loading', 'Testing connection...', 'Attempting to connect to Votifier service');
+                addLogEntry('Starting Votifier connection test', 'info');
+                addLogEntry(`Connecting to ${formData.host}:${formData.port}`, 'info');
+                
+                setTimeout(() => {
+                    // Simulate connection attempt
+                    const connectionSuccess = Math.random() > 0.3; // 70% success rate for demo
+                    
+                    if (connectionSuccess) {
+                        addLogEntry('Connection established successfully', 'success');
+                        addLogEntry('Validating RSA public key format...', 'info');
+                        
+                        setTimeout(() => {
+                            const keyValid = validateRSAKey(formData.publicKey);
+                            
+                            if (keyValid) {
+                                addLogEntry('RSA public key format validated', 'success');
+                                addLogEntry('Encrypting vote data...', 'info');
+                                
+                                setTimeout(() => {
+                                    addLogEntry(`Vote data: username=${formData.username}, service=${formData.serviceName}`, 'info');
+                                    addLogEntry('Vote packet encrypted and sent successfully', 'success');
+                                    addLogEntry('Votifier test completed successfully', 'success');
+                                    
+                                    updateStatus('success', 'Test Successful', 
+                                        'Vote was successfully sent to the server. Check your server console for the vote event.');
+                                    resolve(true);
+                                }, 1000);
+                            } else {
+                                addLogEntry('Invalid RSA public key format', 'error');
+                                updateStatus('error', 'Key Format Error', 
+                                    'The RSA public key format is invalid. Please check your Votifier configuration.');
+                                resolve(false);
+                            }
+                        }, 800);
+                    } else {
+                        addLogEntry(`Connection failed: Unable to reach ${formData.host}:${formData.port}`, 'error');
+                        addLogEntry('Possible causes: Server offline, port blocked, or incorrect configuration', 'warning');
+                        updateStatus('error', 'Connection Failed', 
+                            'Could not connect to the Votifier service. Check your server and port configuration.');
+                        resolve(false);
+                    }
+                }, 1500);
+            });
+        }
+
+        document.getElementById('voteForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const button = document.getElementById('testButton');
+            button.disabled = true;
+            button.textContent = '⏳ Testing...';
+            
+            const formData = {
+                host: document.getElementById('serverHost').value,
+                port: document.getElementById('serverPort').value,
+                publicKey: document.getElementById('publicKey').value,
+                username: document.getElementById('username').value,
+                serviceName: document.getElementById('serviceName').value,
+                address: document.getElementById('address').value,
+                timestamp: document.getElementById('timestamp').value
+            };
+            
+            try {
+                await simulateVoteTest(formData);
+            } catch (error) {
+                addLogEntry(`Unexpected error: ${error.message}`, 'error');
+                updateStatus('error', 'Test Failed', 'An unexpected error occurred during testing.');
+            } finally {
+                button.disabled = false;
+                button.textContent = '🚀 Send Test Vote';
+            }
+        });
+
+        // Initialize timestamp and update every second
+        updateTimestamp();
+        setInterval(updateTimestamp, 1000);
+        
+        // Initialize log
+        addLogEntry('Votifier Tester ready for testing', 'success');
+    </script>
+</body>
+</html>

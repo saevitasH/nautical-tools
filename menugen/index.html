@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minecraft Menu Generator</title>
+    <style>
+        :root {
+            --body: #0b1a2f;
+            --secondBG: #1e293b;
+            --thirdBG: #0f172a;
+            --accent: #38bdf8;
+            --secondary-accent: #10b981;
+            --mainText: #f8fafc;
+            --text: #cbd5e1;
+            --boxShadow: 0 4px 15px -3px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #0f3460 100%);
+            color: var(--text);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 0;
+        }
+
+        header {
+            width: 100%;
+            background-color: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 30px 0;
+            text-align: center;
+            border-bottom: 1px solid #334155;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .logo svg {
+            width: 36px;
+            height: 36px;
+            fill: var(--accent);
+        }
+
+        h1 {
+            font-weight: 700;
+            font-size: 2.2rem;
+            color: var(--mainText);
+            margin-bottom: 10px;
+        }
+
+        .tagline {
+            color: var(--accent);
+            font-size: 1rem;
+        }
+
+        .format-selector {
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .format-btn {
+            background: var(--thirdBG);
+            color: var(--text);
+            border: 2px solid #475569;
+            border-radius: 8px;
+            padding: 12px 20px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .format-btn.active {
+            background: var(--accent);
+            color: #0f172a;
+            border-color: var(--accent);
+            font-weight: 600;
+        }
+
+        .format-btn:hover:not(.active) {
+            border-color: var(--accent);
+            background: rgba(56, 189, 248, 0.1);
+        }
+
+        .skript-addon-selector {
+            display: none;
+            margin-top: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .skript-addon-selector.active {
+            display: flex;
+        }
+
+        .addon-btn {
+            background: var(--thirdBG);
+            color: var(--text);
+            border: 1px solid #475569;
+            border-radius: 6px;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .addon-btn.active {
+            background: var(--secondary-accent);
+            color: white;
+            border-color: var(--secondary-accent);
+        }
+
+        .addon-btn:hover:not(.active) {
+            border-color: var(--secondary-accent);
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .card {
+            background: var(--secondBG);
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: var(--boxShadow);
+        }
+
+        .card h2 {
+            color: var(--mainText);
+            margin-bottom: 20px;
+            font-size: 1.4rem;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 1rem;
+            color: var(--mainText);
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            font-size: 1rem;
+            border: 1px solid #475569;
+            border-radius: 6px;
+            background: var(--thirdBG);
+            color: var(--mainText);
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: var(--accent);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.25);
+        }
+
+        .form-group select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23cbd5e1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background: var(--accent);
+            color: #0f172a;
+            font-weight: 600;
+            border: none;
+            border-radius: 6px;
+            padding: 12px 20px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        button.secondary {
+            background: #475569;
+            color: white;
+        }
+
+        button.danger {
+            background: #dc2626;
+            color: white;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(56, 189, 248, 0.25);
+        }
+
+        button.secondary:hover {
+            box-shadow: 0 4px 12px rgba(71, 85, 105, 0.25);
+        }
+
+        button.danger:hover {
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.25);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .accordion {
+            margin-bottom: 15px;
+        }
+
+        .accordion-header {
+            background: var(--thirdBG);
+            color: var(--mainText);
+            padding: 12px 15px;
+            cursor: pointer;
+            border-radius: 6px;
+            border: 1px solid #475569;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .accordion-header:hover {
+            background: #334155;
+            border-color: var(--accent);
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            background: var(--thirdBG);
+        }
+
+        .accordion-content.active {
+            max-height: 1000px;
+            padding: 15px;
+            border: 1px solid #475569;
+            border-top: none;
+            border-radius: 0 0 6px 6px;
+        }
+
+        .preview-section {
+            margin: 25px 0;
+        }
+
+        .preview-section h3 {
+            color: var(--mainText);
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(9, 1fr);
+            gap: 3px;
+            background: var(--thirdBG);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #475569;
+            margin: 15px 0;
+        }
+
+        .preview-slot {
+            aspect-ratio: 1;
+            background: #374151;
+            border: 1px solid #6b7280;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .preview-slot:hover {
+            background: var(--accent);
+            color: #0f172a;
+            transform: scale(1.05);
+        }
+
+        .preview-slot.occupied {
+            background: #059669;
+            color: white;
+            font-weight: bold;
+        }
+
+        .preview-slot.selected {
+            border: 2px solid var(--accent);
+            box-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+        }
+
+        .items-container {
+            border: 2px dashed #475569;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            background: var(--thirdBG);
+            min-height: 200px;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #64748b;
+            padding: 40px 20px;
+            font-style: italic;
+        }
+
+        .menu-item {
+            background: var(--secondBG);
+            border: 1px solid #475569;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .menu-item h4 {
+            color: var(--mainText);
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #334155;
+        }
+
+        .remove-item {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #dc2626;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .output-container {
+            background: var(--thirdBG);
+            color: var(--mainText);
+            border-radius: 8px;
+            border: 1px solid #475569;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            max-height: 500px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            position: relative;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: var(--accent);
+            color: #0f172a;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            z-index: 2;
+        }
+
+        .format-indicator {
+            background: var(--secondary-accent);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            z-index: 2;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+                padding: 20px 15px;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .preview-grid {
+                grid-template-columns: repeat(9, 1fr);
+                gap: 2px;
+                padding: 10px;
+            }
+
+            .format-selector,
+            .skript-addon-selector {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                <path d="M9 9h6v6h-6z"/>
+                <path d="M9 3v6"/>
+                <path d="M21 9h-6"/>
+                <path d="M9 21v-6"/>
+                <path d="M3 9h6"/>
+            </svg>
+            <h1>Minecraft Menu Generator</h1>
+        </div>
+        <p class="tagline">Create custom menus for DeluxeMenus & Skript with various addons</p>
+        
+        <div class="format-selector">
+            <button class="format-btn active" onclick="selectFormat('deluxemenus')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                    <path d="M9 9h6v6h-6z"/>
+                </svg>
+                DeluxeMenus
+            </button>
+            <button class="format-btn" onclick="selectFormat('skript')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="16 18 22 12 16 6"></polyline>
+                    <polyline points="8 6 2 12 8 18"></polyline>
+                </svg>
+                Skript
+            </button>
+        </div>
+
+        <div class="skript-addon-selector" id="skriptAddonSelector">
+            <button class="addon-btn active" onclick="selectSkriptAddon('builtin')">Built-in GUI</button>
+            <button class="addon-btn" onclick="selectSkriptAddon('skriptgui')">Skript-GUI</button>
+            <button class="addon-btn" onclick="selectSkriptAddon('skbee')">skBee</button>
+            <button class="addon-btn" onclick="selectSkriptAddon('tuske')">TuSKe</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="card">
+            <h2>Menu Configuration</h2>
+            
+            <div class="form-group">
+                <label for="menuName">Menu Name</label>
+                <input type="text" id="menuName" placeholder="my_menu" value="example_menu">
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="menuTitle">Menu Title</label>
+                    <input type="text" id="menuTitle" placeholder="&6My Custom Menu" value="&6Example Menu">
+                </div>
+                <div class="form-group">
+                    <label for="menuSize">Menu Size</label>
+                    <select id="menuSize">
+                        <option value="9">9 (1 row)</option>
+                        <option value="18">18 (2 rows)</option>
+                        <option value="27" selected>27 (3 rows)</option>
+                        <option value="36">36 (4 rows)</option>
+                        <option value="45">45 (5 rows)</option>
+                        <option value="54">54 (6 rows)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group" id="openCommandGroup">
+                <label for="openCommand">Open Command</label>
+                <input type="text" id="openCommand" placeholder="openmenu" value="examplemenu">
+            </div>
+
+            <div class="accordion">
+                <div class="accordion-header" onclick="toggleAccordion('advanced-settings')">
+                    Advanced Settings
+                    <span>▼</span>
+                </div>
+                <div class="accordion-content" id="advanced-settings">
+                    <div class="form-group" id="permissionGroup">
+                        <label for="permission">Permission</label>
+                        <input type="text" id="permission" placeholder="menu.example">
+                    </div>
+                    <div class="form-group" id="updateIntervalGroup">
+                        <label for="updateInterval">Update Interval (ticks)</label>
+                        <input type="number" id="updateInterval" placeholder="20" value="20">
+                    </div>
+                </div>
+            </div>
+
+            <div class="preview-section">
+                <h3>Menu Preview</h3>
+                <div class="preview-grid" id="menuPreview"></div>
+            </div>
+
+            <div class="preview-section">
+                <h3>Menu Items</h3>
+                <div class="items-container" id="itemsContainer">
+                    <div class="empty-state">
+                        Click on the preview grid above to add items, or use the button below
+                    </div>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button class="secondary" onclick="addMenuItem()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    Add Item
+                </button>
+                <button onclick="generateCode()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="16 18 22 12 16 6"></polyline>
+                        <polyline points="8 6 2 12 8 18"></polyline>
+                    </svg>
+                    Generate Code
+                </button>
+                <button class="danger" onclick="clearAll()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path d="m19 6-2 14H7L5 6"></path>
+                        <path d="M10 11v6"></path>
+                        <path d="M14 11v6"></path>
+                    </svg>
+                    Clear All
+                </button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Generated Code</h2>
+            <div class="output-container" id="output">
+                <div class="format-indicator" id="formatIndicator">DeluxeMenus</div>
+                <button class="copy-btn" onclick="copyToClipboard()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                    Copy
+                </button>
+                Click "Generate Code" to see your configuration...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let menuItems = [];
+        let selectedSlot = null;
+        let currentFormat = 'deluxemenus';
+        let currentSkriptAddon = 'builtin';
+
+        function selectFormat(format) {
+            currentFormat = format;
+            
+            // Update format buttons
+            document.querySelectorAll('.format-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Show/hide Skript addon selector
+            const addonSelector = document.getElementById('skriptAddonSelector');
+            if (format === 'skript') {
+                addonSelector.classList.add('active');
+            } else {
+                addonSelector.classList.remove('active');
+            }
+            
+            // Update form visibility
+            updateFormVisibility();
+            
+            // Update format indicator
+            updateFormatIndicator();
+            
+            // Regenerate code
+            generateCode();
+        }
+
+        function selectSkriptAddon(addon) {
+            currentSkriptAddon = addon;
+            
+            // Update addon buttons
+            document.querySelectorAll('.addon-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Update format indicator
+            updateFormatIndicator();
+            
+            // Regenerate code
+            generateCode();
+        }
+
+        function updateFormVisibility() {
+            const isDeluxeMenus = currentFormat === 'deluxemenus';
+            
+            // Some fields are DeluxeMenus specific
+            document.getElementById('updateIntervalGroup').style.display = isDeluxeMenus ? 'block' : 'none';
+        }
+
+        function updateFormatIndicator() {
+            const indicator = document.getElementById('formatIndicator');
+            if (currentFormat === 'deluxemenus') {
+                indicator.textContent = 'DeluxeMenus';
+                indicator.style.background = 'var(--accent)';
+            } else {
+                const addonNames = {
+                    'builtin': 'Skript Built-in',
+                    'skriptgui': 'Skript-GUI',
+                    'skbee': 'skBee',
+                    'tuske': 'TuSKe'
+                };
+                indicator.textContent = addonNames[currentSkriptAddon];
+                indicator.style.background = 'var(--secondary-accent)';
+            }
+        }
+
+        function initializePreview() {
+            const preview = document.getElementById('menuPreview');
+            const size = parseInt(document.getElementById('menuSize').value);
+            preview.innerHTML = '';
+            
+            for (let i = 0; i < size; i++) {
+                const slot = document.createElement('div');
+                slot.className = 'preview-slot';
+                slot.textContent = i;
+                slot.onclick = () => selectSlot(i);
+                preview.appendChild(slot);
+            }
+        }
+
+        function selectSlot(slotNumber) {
+            document.querySelectorAll('.preview-slot').forEach(slot => {
+                slot.classList.remove('selected');
+            });
+            
+            const slots = document.querySelectorAll('.preview-slot');
+            slots[slotNumber].classList.add('selected');
+            
+            selectedSlot = slotNumber;
+            
+            const existingItem = menuItems.find(item => item.slot === slotNumber);
+            if (existingItem) {
+                populateItemForm(existingItem);
+            } else {
+                addMenuItem(slotNumber);
+            }
+        }
+
+        function addMenuItem(slotNumber = null) {
+            const slot = slotNumber !== null ? slotNumber : (selectedSlot !== null ? selectedSlot : 0);
+            
+            const existingIndex = menuItems.findIndex(item => item.slot === slot);
+            if (existingIndex !== -1) {
+                populateItemForm(menuItems[existingIndex]);
+                return;
+            }
+
+            const itemId = Date.now();
+            const item = {
+                id: itemId,
+                slot: slot,
+                material: 'STONE',
+                displayName: '&7Example Item',
+                lore: ['&8Click me!'],
+                amount: 1,
+                leftClickCommands: [],
+                rightClickCommands: [],
+                requirements: []
+            };
+
+            menuItems.push(item);
+            renderItems();
+            updatePreview();
+        }
+
+        function removeMenuItem(itemId) {
+            menuItems = menuItems.filter(item => item.id !== itemId);
+            renderItems();
+            updatePreview();
+        }
+
+        function renderItems() {
+            const container = document.getElementById('itemsContainer');
+            
+            if (menuItems.length === 0) {
+                container.innerHTML = '<div class="empty-state">Click on the preview grid above to add items, or use the button below</div>';
+                return;
+            }
+
+            container.innerHTML = menuItems.map(item => `
+                <div class="menu-item">
+                    <button class="remove-item" onclick="removeMenuItem(${item.id})">×</button>
+                    <h4>Slot ${item.slot} - ${item.displayName}</h4>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Material:</label>
+                            <input type="text" value="${item.material}" onchange="updateItem(${item.id}, 'material', this.value)" placeholder="STONE">
+                        </div>
+                        <div class="form-group">
+                            <label>Amount:</label>
+                            <input type="number" value="${item.amount}" onchange="updateItem(${item.id}, 'amount', this.value)" min="1" max="64">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Display Name:</label>
+                        <input type="text" value="${item.displayName}" onchange="updateItem(${item.id}, 'displayName', this.value)" placeholder="&7Item Name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Lore (one line per entry):</label>
+                        <textarea rows="3" onchange="updateItem(${item.id}, 'lore', this.value.split('\\n').filter(line => line.trim()))" placeholder="&8First line of lore\n&8Second line of lore">${item.lore.join('\\n')}</textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Left Click Commands (one per line):</label>
+                        <textarea rows="2" onchange="updateItem(${item.id}, 'leftClickCommands', this.value.split('\\n').filter(line => line.trim()))" placeholder="give %player% diamond 1\ntell %player% You got a diamond!">${item.leftClickCommands.join('\\n')}</textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Right Click Commands (one per line):</label>
+                        <textarea rows="2" onchange="updateItem(${item.id}, 'rightClickCommands', this.value.split('\\n').filter(line => line.trim()))" placeholder="tell %player% Right clicked!">${item.rightClickCommands.join('\\n')}</textarea>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateItem(itemId, property, value) {
+            const item = menuItems.find(item => item.id === itemId);
+            if (item) {
+                item[property] = value;
+                updatePreview();
+            }
+        }
+
+        function updatePreview() {
+            const slots = document.querySelectorAll('.preview-slot');
+            const size = parseInt(document.getElementById('menuSize').value);
+            
+            for (let i = 0; i < size; i++) {
+                slots[i].className = 'preview-slot';
+                slots[i].textContent = i;
+            }
+            
+            menuItems.forEach(item => {
+                if (item.slot < size) {
+                    slots[item.slot].classList.add('occupied');
+                    slots[item.slot].textContent = item.material.substring(0, 3);
+                    slots[item.slot].title = `${item.displayName} (${item.material})`;
+                }
+            });
+        }
+
+        function generateDeluxeMenusCode() {
+            const menuName = document.getElementById('menuName').value || 'example_menu';
+            const menuTitle = document.getElementById('menuTitle').value || '&6Example Menu';
+            const menuSize = document.getElementById('menuSize').value;
+            const openCommand = document.getElementById('openCommand').value;
+            const permission = document.getElementById('permission').value;
+            const updateInterval = document.getElementById('updateInterval').value;
+
+            let config = `${menuName}:\n`;
+            config += `  menu_title: '${menuTitle}'\n`;
+            config += `  size: ${menuSize}\n`;
+            
+            if (openCommand) {
+                config += `  open_command: '${openCommand}'\n`;
+            }
+            
+            if (permission) {
+                config += `  open_requirement:\n`;
+                config += `    requirements:\n`;
+                config += `      permission:\n`;
+                config += `        type: has permission\n`;
+                config += `        permission: '${permission}'\n`;
+                config += `        deny_commands:\n`;
+                config += `        - '[message] &cYou don\\'t have permission to use this menu!'\n`;
+            }
+            
+            if (updateInterval && updateInterval !== '20') {
+                config += `  update_interval: ${updateInterval}\n`;
+            }
+            
+            config += `  items:\n`;
+
+            if (menuItems.length === 0) {
+                config += `    # No items configured - add some items above!\n`;
+            } else {
+                menuItems.forEach(item => {
+                    config += `    '${item.slot}':\n`;
+                    config += `      material: ${item.material}\n`;
+                    config += `      amount: ${item.amount}\n`;
+                    config += `      display_name: '${item.displayName}'\n`;
+                    
+                    if (item.lore && item.lore.length > 0) {
+                        config += `      lore:\n`;
+                        item.lore.forEach(line => {
+                            if (line.trim()) config += `      - '${line}'\n`;
+                        });
+                    }
+                    
+                    if (item.leftClickCommands && item.leftClickCommands.length > 0) {
+                        config += `      left_click_commands:\n`;
+                        item.leftClickCommands.forEach(cmd => {
+                            if (cmd.trim()) config += `      - '${cmd}'\n`;
+                        });
+                    }
+                    
+                    if (item.rightClickCommands && item.rightClickCommands.length > 0) {
+                        config += `      right_click_commands:\n`;
+                        item.rightClickCommands.forEach(cmd => {
+                            if (cmd.trim()) config += `      - '${cmd}'\n`;
+                        });
+                    }
+                    
+                    config += `\n`;
+                });
+            }
+
+            return config;
+        }
+
+        function generateSkriptBuiltinCode() {
+            const menuName = document.getElementById('menuName').value || 'example_menu';
+            const menuTitle = document.getElementById('menuTitle').value || '&6Example Menu';
+            const menuSize = parseInt(document.getElementById('menuSize').value);
+            const openCommand = document.getElementById('openCommand').value;
+            const permission = document.getElementById('permission').value;
+
+            let code = `# Skript Built-in GUI for ${menuName}\n\n`;
+            
+            if (openCommand) {
+                code += `command /${openCommand}:\n`;
+                if (permission) {
+                    code += `    permission: ${permission}\n`;
+                    code += `    permission message: &cYou don't have permission to use this command!\n`;
+                }
+                code += `    trigger:\n`;
+                code += `        open_${menuName}_gui(player)\n\n`;
+            }
+
+            code += `function open_${menuName}_gui(p: player):\n`;
+            code += `    open chest with ${Math.ceil(menuSize / 9)} rows named "${menuTitle}" to {_p}\n`;
+            code += `    wait 1 tick\n`;
+            
+            if (menuItems.length === 0) {
+                code += `    # No items configured - add some items above!\n`;
+            } else {
+                menuItems.forEach(item => {
+                    const itemName = item.displayName.replace(/&/g, '§');
+                    code += `    set slot ${item.slot} of {_p}'s current inventory to ${item.amount} ${item.material.toLowerCase()}`;
+                    
+                    if (item.displayName !== '&7Example Item' || item.lore.length > 0) {
+                        code += ` named "${item.displayName}"`;
+                        if (item.lore.length > 0) {
+                            const loreString = item.lore.map(line => `"${line}"`).join(', ');
+                            code += ` with lore ${loreString}`;
+                        }
+                    }
+                    code += `\n`;
+                });
+            }
+
+            code += `\non inventory click:\n`;
+            code += `    if inventory name of player's current inventory is "${menuTitle}":\n`;
+            code += `        cancel event\n`;
+            
+            if (menuItems.length > 0) {
+                menuItems.forEach(item => {
+                    if (item.leftClickCommands.length > 0 || item.rightClickCommands.length > 0) {
+                        code += `        if clicked slot is ${item.slot}:\n`;
+                        
+                        if (item.leftClickCommands.length > 0) {
+                            code += `            if click type is left mouse button:\n`;
+                            item.leftClickCommands.forEach(cmd => {
+                                if (cmd.trim()) {
+                                    if (cmd.includes('console')) {
+                                        const cleanCmd = cmd.replace(/\[console\]\s*/, '');
+                                        code += `                execute console command "${cleanCmd}"\n`;
+                                    } else if (cmd.includes('message')) {
+                                        const cleanCmd = cmd.replace(/\[message\]\s*/, '');
+                                        code += `                send "${cleanCmd}" to player\n`;
+                                    } else {
+                                        code += `                make player execute command "/${cmd}"\n`;
+                                    }
+                                }
+                            });
+                        }
+                        
+                        if (item.rightClickCommands.length > 0) {
+                            code += `            if click type is right mouse button:\n`;
+                            item.rightClickCommands.forEach(cmd => {
+                                if (cmd.trim()) {
+                                    if (cmd.includes('console')) {
+                                        const cleanCmd = cmd.replace(/\[console\]\s*/, '');
+                                        code += `                execute console command "${cleanCmd}"\n`;
+                                    } else if (cmd.includes('message')) {
+                                        const cleanCmd = cmd.replace(/\[message\]\s*/, '');
+                                        code += `                send "${cleanCmd}" to player\n`;
+                                    } else {
+                                        code += `                make player execute command "/${cmd}"\n`;
+                                    }
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+
+            return code;
+        }
+
+        function generateSkriptGuiCode() {
+            const menuName = document.getElementById('menuName').value || 'example_menu';
+            const menuTitle = document.getElementById('menuTitle').value || '&6Example Menu';
+            const menuSize = parseInt(document.getElementById('menuSize').value);
+            const openCommand = document.getElementById('openCommand').value;
+            const permission = document.getElementById('permission').value;
+
+            let code = `# Skript-GUI for ${menuName}\n\n`;
+            
+            if (openCommand) {
+                code += `command /${openCommand}:\n`;
+                if (permission) {
+                    code += `    permission: ${permission}\n`;
+                    code += `    permission message: &cYou don't have permission to use this command!\n`;
+                }
+                code += `    trigger:\n`;
+                code += `        open_${menuName}_gui(player)\n\n`;
+            }
+
+            code += `function open_${menuName}_gui(p: player):\n`;
+            code += `    create a gui with virtual chest inventory with ${Math.ceil(menuSize / 9)} rows named "${menuTitle}":\n`;
+            
+            if (menuItems.length === 0) {
+                code += `        # No items configured - add some items above!\n`;
+            } else {
+                menuItems.forEach(item => {
+                    code += `        make gui slot ${item.slot} with ${item.amount} ${item.material.toLowerCase()}`;
+                    
+                    if (item.displayName !== '&7Example Item' || item.lore.length > 0) {
+                        code += ` named "${item.displayName}"`;
+                        if (item.lore.length > 0) {
+                            const loreString = item.lore.map(line => `"${line}"`).join(', ');
+                            code += ` with lore ${loreString}`;
+                        }
+                    }
+                    
+                    if (item.leftClickCommands.length > 0 || item.rightClickCommands.length > 0) {
+                        code += `:\n`;
+                        
+                        if (item.leftClickCommands.length > 0) {
+                            code += `            if gui-click-type is left mouse button:\n`;
+                            item.leftClickCommands.forEach(cmd => {
+                                if (cmd.trim()) {
+                                    if (cmd.includes('console')) {
+                                        const cleanCmd = cmd.replace(/\[console\]\s*/, '');
+                                        code += `                execute console command "${cleanCmd}"\n`;
+                                    } else if (cmd.includes('message')) {
+                                        const cleanCmd = cmd.replace(/\[message\]\s*/, '');
+                                        code += `                send "${cleanCmd}" to gui-player\n`;
+                                    } else {
+                                        code += `                make gui-player execute command "/${cmd}"\n`;
+                                    }
+                                }
+                            });
+                        }
+                        
+                        if (item.rightClickCommands.length > 0) {
+                            code += `            if gui-click-type is right mouse button:\n`;
+                            item.rightClickCommands.forEach(cmd => {
+                                if (cmd.trim()) {
+                                    if (cmd.includes('console')) {
+                                        const cleanCmd = cmd.replace(/\[console\]\s*/, '');
+                                        code += `                execute console command "${cleanCmd}"\n`;
+                                    } else if (cmd.includes('message')) {
+                                        const cleanCmd = cmd.replace(/\[message\]\s*/, '');
+                                        code += `                send "${cleanCmd}" to gui-player\n`;
+                                    } else {
+                                        code += `                make gui-player execute command "/${cmd}"\n`;
+                                    }
+                                }
+                            });
+                        }
+                    } else {
+                        code += `\n`;
+                    }
+                });
+            }
+            
+            code += `    open last gui to {_p}\n`;
+
+            return code;
+        }
+
+        function generateSkBeeCode() {
+            const menuName = document.getElementById('menuName').value || 'example_menu';
+            const menuTitle = document.getElementById('menuTitle').value || '&6Example Menu';
+            const menuSize = parseInt(document.getElementById('menuSize').value);
+            const openCommand = document.getElementById('openCommand').value;
+            const permission = document.getElementById('permission').value;
+
+            let code = `# skBee GUI for ${menuName}\n\n`;
+            
+            if (openCommand) {
+                code += `command /${openCommand}:\n`;
+                if (permission) {
+                    code += `    permission: ${permission}\n`;
+                    code += `    permission message: &cYou don't have permission to use this command!\n`;
+                }
+                code += `    trigger:\n`;
+                code += `        open_${menuName}_gui(player)\n\n`;
+            }
+
+            code += `function open_${menuName}_gui(p: player):\n`;
+            code += `    create gui with id "${menuName}" for {_p} with title "${menuTitle}" with ${Math.ceil(menuSize / 9)} rows\n`;
+            
+            if (menuItems.length === 0) {
+                code += `    # No items configured - add some items above!\n`;
+            } else {
+                menuItems.forEach(item => {
+                    code += `    set slot ${item.slot} of gui "${menuName}" for {_p} to ${item.amount} ${item.material.toLowerCase()}`;
+                    
+                    if (item.displayName !== '&7Example Item' || item.lore.length > 0) {
+                        code += ` named "${item.displayName}"`;
+                        if (item.lore.length > 0) {
+                            const loreString = item.lore.map(line => `"${line}"`).join(', ');
+                            code += ` with lore ${loreString}`;
+                        }
+                    }
+                    code += `\n`;
+                });
+            }
+            
+            code += `    open gui "${menuName}" to {_p}\n\n`;
+
+            code += `on gui click:\n`;
+            code += `    if gui-id of event-gui is "${menuName}":\n`;
+            code += `        cancel event\n`;
+            
+            if (menuItems.length > 0) {
+                menuItems.forEach(item => {
+                    if (item.leftClickCommands.length > 0 || item.rightClickCommands.length > 0) {
+                        code += `        if clicked slot is ${item.slot}:\n`;
+                        
+                        if (item.leftClickCommands.length > 0) {
+                            code += `            if click type is left mouse button:\n`;
+                            item.leftClickCommands.forEach(cmd => {
+                                if (cmd.trim()) {
+                                    if (cmd.includes('console')) {
+                                        const cleanCmd = cmd.replace(/\[console\]\s*/, '');
+                                        code += `                execute console command "${cleanCmd}"\n`;
+                                    } else if (cmd.includes('message')) {
+                                        const cleanCmd = cmd.replace(/\[message\]\s*/, '');
+                                        code += `                send "${cleanCmd}" to player\n`;
+                                    } else {
+                                        code += `                make player execute command "/${cmd}"\n`;
+                                    }
+                                }
+                            });
+                        }
+                        
+                        if (item.rightClickCommands.length > 0) {
+                            code += `            if click type is right mouse button:\n`;
+                            item.rightClickCommands.forEach(cmd => {
+                                if (cmd.trim()) {
+                                    if (cmd.includes('console')) {
+                                        const cleanCmd = cmd.replace(/\[console\]\s*/, '');
+                                        code += `                execute console command "${cleanCmd}"\n`;
+                                    } else if (cmd.includes('message')) {
+                                        const cleanCmd = cmd.replace(/\[message\]\s*/, '');
+                                        code += `                send "${cleanCmd}" to player\n`;
+                                    } else {
+                                        code += `                make player execute command "/${cmd}"\n`;
+                                    }
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+
+            return code;
+        }
+
+        function generateTuSKeCode() {
+            const menuName = document.getElementById('menuName').value || 'example_menu';
+            const menuTitle = document.getElementById('menuTitle').value || '&6Example Menu';
+            const menuSize = parseInt(document.getElementById('menuSize').value);
+            const openCommand = document.getElementById('openCommand').value;
+            const permission = document.getElementById('permission').value;
+
+            let code = `# TuSKe GUI for ${menuName}\n\n`;
+            
+            if (openCommand) {
+                code += `command /${openCommand}:\n`;
+                if (permission) {
+                    code += `    permission: ${permission}\n`;
+                    code += `    permission message: &cYou don't have permission to use this command!\n`;
+                }
+                code += `    trigger:\n`;
+                code += `        open_${menuName}_gui(player)\n\n`;
+            }
+
+            code += `function open_${menuName}_gui(p: player):\n`;
+            code += `    open virtual chest inventory with size ${menuSize} named "${menuTitle}" to {_p}\n`;
+            code += `    wait 1 tick\n`;
+            
+            if (menuItems.length === 0) {
+                code += `    # No items configured - add some items above!\n`;
+            } else {
+                menuItems.forEach(item => {
+                    code += `    format gui slot ${item.slot} of {_p} with ${item.amount} ${item.material.toLowerCase()}`;
+                    
+                    if (item.displayName !== '&7Example Item' || item.lore.length > 0) {
+                        code += ` named "${item.displayName}"`;
+                        if (item.lore.length > 0) {
+                            const loreString = item.lore.map(line => `"${line}"`).join(', ');
+                            code += ` with lore ${loreString}`;
+                        }
+                    }
+                    
+                    if (item.leftClickCommands.length > 0 || item.rightClickCommands.length > 0) {
+                        code += ` to run:\n`;
+                        
+                        if (item.leftClickCommands.length > 0) {
+                            code += `        if gui click type is left mouse button:\n`;
+                            item.leftClickCommands.forEach(cmd => {
+                                if (cmd.trim()) {
+                                    if (cmd.includes('console')) {
+                                        const cleanCmd = cmd.replace(/\[console\]\s*/, '');
+                                        code += `            execute console command "${cleanCmd}"\n`;
+                                    } else if (cmd.includes('message')) {
+                                        const cleanCmd = cmd.replace(/\[message\]\s*/, '');
+                                        code += `            send "${cleanCmd}" to player\n`;
+                                    } else {
+                                        code += `            make player execute command "/${cmd}"\n`;
+                                    }
+                                }
+                            });
+                        }
+                        
+                        if (item.rightClickCommands.length > 0) {
+                            code += `        if gui click type is right mouse button:\n`;
+                            item.rightClickCommands.forEach(cmd => {
+                                if (cmd.trim()) {
+                                    if (cmd.includes('console')) {
+                                        const cleanCmd = cmd.replace(/\[console\]\s*/, '');
+                                        code += `            execute console command "${cleanCmd}"\n`;
+                                    } else if (cmd.includes('message')) {
+                                        const cleanCmd = cmd.replace(/\[message\]\s*/, '');
+                                        code += `            send "${cleanCmd}" to player\n`;
+                                    } else {
+                                        code += `            make player execute command "/${cmd}"\n`;
+                                    }
+                                }
+                            });
+                        }
+                    } else {
+                        code += `\n`;
+                    }
+                });
+            }
+
+            return code;
+        }
+
+        function generateCode() {
+            let code = '';
+            
+            switch (currentFormat) {
+                case 'deluxemenus':
+                    code = generateDeluxeMenusCode();
+                    break;
+                case 'skript':
+                    switch (currentSkriptAddon) {
+                        case 'builtin':
+                            code = generateSkriptBuiltinCode();
+                            break;
+                        case 'skriptgui':
+                            code = generateSkriptGuiCode();
+                            break;
+                        case 'skbee':
+                            code = generateSkBeeCode();
+                            break;
+                        case 'tuske':
+                            code = generateTuSKeCode();
+                            break;
+                    }
+                    break;
+            }
+            
+            document.getElementById('output').textContent = code;
+        }
+
+        function copyToClipboard() {
+            const output = document.getElementById('output');
+            navigator.clipboard.writeText(output.textContent).then(() => {
+                const btn = document.querySelector('.copy-btn');
+                const originalContent = btn.innerHTML;
+                btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Copied!';
+                btn.style.background = '#10b981';
+                
+                setTimeout(() => {
+                    btn.innerHTML = originalContent;
+                    btn.style.background = 'var(--accent)';
+                }, 2000);
+            }).catch(() => {
+                alert('Failed to copy to clipboard. Please select and copy manually.');
+            });
+        }
+
+        function clearAll() {
+            if (confirm('Are you sure you want to clear all items? This cannot be undone.')) {
+                menuItems = [];
+                selectedSlot = null;
+                renderItems();
+                updatePreview();
+                document.getElementById('output').textContent = 'Click "Generate Code" to see your configuration...';
+            }
+        }
+
+        function toggleAccordion(id) {
+            const content = document.getElementById(id);
+            const header = content.previousElementSibling;
+            const arrow = header.querySelector('span');
+            
+            content.classList.toggle('active');
+            arrow.textContent = content.classList.contains('active') ? '▲' : '▼';
+        }
+
+        function populateItemForm(item) {
+            renderItems();
+        }
+
+        // Event listeners
+        document.getElementById('menuSize').addEventListener('change', () => {
+            initializePreview();
+            updatePreview();
+        });
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', () => {
+            initializePreview();
+            updateFormVisibility();
+            updateFormatIndicator();
+            generateCode();
+        });
+    </script>
+</body>
+</html>

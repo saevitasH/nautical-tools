@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nautical Hosting - Custom Item Generator</title>
+  <style>
+    :root {
+      --body: #0b1a2f;
+      --secondBG: #1e293b;
+      --thirdBG: #0f172a;
+      --accent: #38bdf8;
+      --mainText: #f8fafc;
+      --text: #cbd5e1;
+      --boxShadow: 0 4px 15px -3px rgba(0, 0, 0, 0.3);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(135deg, #0f172a 0%, #0f3460 100%);
+      color: var(--text);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      min-height: 100vh;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    header {
+      width: 100%;
+      background-color: rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(10px);
+      padding: 20px 0;
+      text-align: center;
+      border-bottom: 1px solid #334155;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 10px;
+    }
+
+    .logo svg {
+      width: 36px;
+      height: 36px;
+      fill: var(--accent);
+    }
+
+    h1 {
+      font-weight: 700;
+      font-size: 2.2rem;
+      color: var(--mainText);
+    }
+
+    .tagline {
+      color: var(--accent);
+      font-size: 1rem;
+      margin-bottom: 15px;
+    }
+
+    main {
+      max-width: 900px;
+      width: 100%;
+      padding: 30px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    .card {
+      background: var(--secondBG);
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 25px;
+      box-shadow: var(--boxShadow);
+    }
+
+    .card h2 {
+      color: var(--mainText);
+      margin-bottom: 15px;
+      font-size: 1.4rem;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 10px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-size: 1rem;
+      color: var(--mainText);
+      margin-bottom: 8px;
+    }
+
+    .help-text {
+      font-size: 0.85rem;
+      color: var(--text);
+      margin-top: 4px;
+      opacity: 0.8;
+    }
+
+    input[type="text"], input[type="number"], select, textarea {
+      width: 100%;
+      padding: 12px;
+      font-size: 1rem;
+      border: 1px solid #475569;
+      border-radius: 6px;
+      background: var(--thirdBG);
+      color: var(--mainText);
+      transition: border-color 0.3s, box-shadow 0.3s;
+      font-family: inherit;
+    }
+
+    input[type="text"]:focus, input[type="number"]:focus, select:focus, textarea:focus {
+      border-color: var(--accent);
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.25);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .lore-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .lore-line {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .lore-line input {
+      flex: 1;
+    }
+
+    .remove-lore-btn {
+      background: #dc2626;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .remove-lore-btn:hover {
+      background: #b91c1c;
+    }
+
+    .add-lore-btn {
+      background: var(--accent);
+      color: #0f172a;
+      border: none;
+      border-radius: 6px;
+      padding: 10px 15px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: all 0.2s;
+      margin-top: 10px;
+    }
+
+    .add-lore-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(56, 189, 248, 0.25);
+    }
+
+    .button-group {
+      display: flex;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    button {
+      flex: 1;
+      background: var(--accent);
+      color: #0f172a;
+      font-weight: 600;
+      border: none;
+      border-radius: 6px;
+      padding: 12px 0;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    button.secondary {
+      background: #475569;
+      color: white;
+    }
+
+    button:disabled {
+      background: #374151;
+      color: #9ca3af;
+      cursor: not-allowed;
+    }
+
+    button:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(56, 189, 248, 0.25);
+    }
+
+    button.secondary:hover:not(:disabled) {
+      box-shadow: 0 4px 12px rgba(71, 85, 105, 0.25);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    button svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .output-container {
+      background: var(--thirdBG);
+      border: 1px solid #334155;
+      border-radius: 6px;
+      padding: 20px;
+      margin-top: 20px;
+    }
+
+    .output-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .output-title {
+      color: var(--mainText);
+      font-weight: 600;
+      font-size: 1.1rem;
+    }
+
+    .copy-btn {
+      background: var(--accent);
+      color: #0f172a;
+      border: none;
+      border-radius: 4px;
+      padding: 6px 12px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .copy-btn:hover {
+      background: #0ea5e9;
+    }
+
+    .code-output {
+      background: #0a0e1a;
+      border: 1px solid #1e293b;
+      border-radius: 4px;
+      padding: 15px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+      color: #e2e8f0;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .preview-card {
+      background: var(--thirdBG);
+      border: 1px solid #334155;
+      border-radius: 6px;
+      padding: 20px;
+      margin-top: 20px;
+    }
+
+    .item-preview {
+      background: #1a1a1a;
+      border: 2px solid #8B5CF6;
+      border-radius: 4px;
+      padding: 15px;
+      color: white;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+      max-width: 300px;
+    }
+
+    .item-name {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .item-lore {
+      color: #a855f7;
+      font-style: italic;
+      line-height: 1.4;
+    }
+
+    /* Minecraft color codes */
+    .mc-0 { color: #000000; } /* Black */
+    .mc-1 { color: #0000AA; } /* Dark Blue */
+    .mc-2 { color: #00AA00; } /* Dark Green */
+    .mc-3 { color: #00AAAA; } /* Dark Aqua */
+    .mc-4 { color: #AA0000; } /* Dark Red */
+    .mc-5 { color: #AA00AA; } /* Dark Purple */
+    .mc-6 { color: #FFAA00; } /* Gold */
+    .mc-7 { color: #AAAAAA; } /* Gray */
+    .mc-8 { color: #555555; } /* Dark Gray */
+    .mc-9 { color: #5555FF; } /* Blue */
+    .mc-a { color: #55FF55; } /* Green */
+    .mc-b { color: #55FFFF; } /* Aqua */
+    .mc-c { color: #FF5555; } /* Red */
+    .mc-d { color: #FF55FF; } /* Light Purple */
+    .mc-e { color: #FFFF55; } /* Yellow */
+    .mc-f { color: #FFFFFF; } /* White */
+    .mc-l { font-weight: bold; } /* Bold */
+    .mc-m { text-decoration: line-through; } /* Strikethrough */
+    .mc-n { text-decoration: underline; } /* Underline */
+    .mc-o { font-style: italic; } /* Italic */
+    .mc-k { 
+      animation: obfuscate 0.5s infinite;
+    } /* Obfuscated */
+
+    @keyframes obfuscate {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    .status-message {
+      padding: 15px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    .status-message.success {
+      background: rgba(34, 197, 94, 0.1);
+      border: 1px solid #22c55e;
+      color: #22c55e;
+    }
+
+    .status-message.error {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid #ef4444;
+      color: #ef4444;
+    }
+
+    footer {
+      width: 100%;
+      background-color: rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(10px);
+      padding: 20px 0;
+      text-align: center;
+      border-top: 1px solid #334155;
+      margin-top: auto;
+    }
+
+    footer p {
+      color: var(--text);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 600px) {
+      .card {
+        padding: 20px;
+      }
+      
+      .button-group {
+        flex-direction: column;
+      }
+      
+      .lore-line {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      
+      .output-header {
+        flex-direction: column;
+        gap: 10px;
+        align-items: stretch;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+      </svg>
+      <h1>Nautical Hosting</h1>
+    </div>
+    <p class="tagline">Custom Item Generator</p>
+  </header>
+
+  <main>
+    <div class="card">
+      <h2>Item Configuration</h2>
+      <div id="statusMessage" class="status-message"></div>
+      
+      <div class="form-group">
+        <label for="baseItem">Base Item ID:</label>
+        <input type="text" id="baseItem" value="minecraft:diamond_sword" placeholder="Enter Minecraft item ID (e.g., minecraft:diamond_sword)" />
+        <div class="help-text">Enter any valid Minecraft item ID. Include the namespace (e.g., minecraft:diamond_sword, custom:my_item)</div>
+      </div>
+      
+      <div class="form-group">
+        <label for="customModelData">Custom Model Data (ID):</label>
+        <input type="number" id="customModelData" value="1" min="1" placeholder="Enter custom model data ID..." />
+      </div>
+      
+      <div class="form-group">
+        <label for="itemName">Custom Name:</label>
+        <input type="text" id="itemName" placeholder="Enter custom item name..." />
+        <div class="help-text">Use &amp; for color codes (e.g., &amp;c for red, &amp;9 for blue, &amp;l for bold, &amp;n for underline)</div>
+      </div>
+      
+      <div class="form-group">
+        <label>Custom Lore:</label>
+        <div class="lore-container" id="loreContainer">
+          <div class="lore-line">
+            <input type="text" class="lore-input" placeholder="Enter lore line..." />
+            <button class="remove-lore-btn" onclick="removeLoreLine(this)">Remove</button>
+          </div>
+        </div>
+        <button class="add-lore-btn" onclick="addLoreLine()">+ Add Lore Line</button>
+        <div class="help-text">Use &amp; for color codes (e.g., &amp;6 for gold, &amp;a for green, &amp;o for italic, &amp;k for obfuscated)</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Additional Options</h2>
+      
+      <div class="form-group">
+        <label for="unbreakable">Unbreakable:</label>
+        <select id="unbreakable">
+          <option value="false">No</option>
+          <option value="true">Yes</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label for="hideFlags">Hide Attributes:</label>
+        <select id="hideFlags">
+          <option value="0">Show All</option>
+          <option value="63">Hide All</option>
+          <option value="1">Hide Enchantments</option>
+          <option value="2">Hide Attributes</option>
+          <option value="4">Hide Unbreakable</option>
+          <option value="8">Hide Can Destroy</option>
+          <option value="16">Hide Can Place On</option>
+          <option value="32">Hide Other</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Preview</h2>
+      <div class="preview-card">
+        <div class="item-preview" id="itemPreview">
+          <div class="item-name" id="previewName">Custom Item</div>
+          <div class="item-lore" id="previewLore">Item lore will appear here...</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Generated Command</h2>
+      <div class="button-group">
+        <button onclick="generateCommand()">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+          </svg>
+          Generate Command
+        </button>
+        
+        <button class="secondary" onclick="clearAll()">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+          </svg>
+          Clear All
+        </button>
+      </div>
+      
+      <div class="output-container" id="outputContainer" style="display: none;">
+        <div class="output-header">
+          <div class="output-title">Minecraft Give Command:</div>
+          <button class="copy-btn" onclick="copyCommand()">Copy Command</button>
+        </div>
+        <div class="code-output" id="commandOutput"></div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p style="color: white;">&copy; 2025 Nautical Hosting. All rights reserved.</p>
+    <p style="color: cyan;">
+      Nautical Hosting official website:
+      <a href="https://nauticalhosting.org" style="color: cyan;" target="_blank" rel="noopener noreferrer">
+        https://nauticalhosting.org
+      </a>
+    </p>
+    <p style="color: gray;">Custom Item Generator v1.0</p>
+  </footer>
+
+  <script>
+    let loreCount = 1;
+
+    function addLoreLine() {
+      const container = document.getElementById('loreContainer');
+      const newLine = document.createElement('div');
+      newLine.className = 'lore-line';
+      newLine.innerHTML = `
+        <input type="text" class="lore-input" placeholder="Enter lore line..." />
+        <button class="remove-lore-btn" onclick="removeLoreLine(this)">Remove</button>
+      `;
+      container.appendChild(newLine);
+      loreCount++;
+      updatePreview();
+    }
+
+    function removeLoreLine(button) {
+      const loreLine = button.parentElement;
+      loreLine.remove();
+      loreCount--;
+      updatePreview();
+    }
+
+    function updatePreview() {
+      const itemName = document.getElementById('itemName').value || 'Custom Item';
+      const loreInputs = document.querySelectorAll('.lore-input');
+      
+      // Convert color codes and update preview name
+      document.getElementById('previewName').innerHTML = convertColorCodes(itemName);
+      
+      let loreHtml = '';
+      loreInputs.forEach((input, index) => {
+        if (input.value.trim()) {
+          loreHtml += (index > 0 ? '<br>' : '') + convertColorCodes(input.value.trim());
+        }
+      });
+      
+      document.getElementById('previewLore').innerHTML = loreHtml || 'Item lore will appear here...';
+    }
+
+    function convertColorCodes(text) {
+      if (!text) return text;
+      
+      // Replace color codes with HTML spans
+      return text
+        .replace(/&([0-9a-fklmnor])/gi, (match, code) => {
+          const lowerCode = code.toLowerCase();
+          return `<span class="mc-${lowerCode}">`;
+        })
+        // Close all spans at the end
+        .replace(/$/, () => {
+          const matches = text.match(/&[0-9a-fklmnor]/gi);
+          return matches ? '</span>'.repeat(matches.length) : '';
+        });
+    }
+
+    function stripColorCodes(text) {
+      return text.replace(/&[0-9a-fklmnor]/gi, '');
+    }
+
+    function convertToMinecraftJson(text) {
+      if (!text) return text;
+      
+      const parts = [];
+      let currentText = '';
+      let currentFormats = {
+        color: null,
+        bold: false,
+        italic: false,
+        underlined: false,
+        strikethrough: false,
+        obfuscated: false
+      };
+      
+      for (let i = 0; i < text.length; i++) {
+        if (text[i] === '&' && i + 1 < text.length) {
+          const code = text[i + 1].toLowerCase();
+          
+          // Save current text part if any
+          if (currentText) {
+            const part = { text: currentText };
+            if (currentFormats.color) part.color = currentFormats.color;
+            if (currentFormats.bold) part.bold = true;
+            if (currentFormats.italic) part.italic = true;
+            if (currentFormats.underlined) part.underlined = true;
+            if (currentFormats.strikethrough) part.strikethrough = true;
+            if (currentFormats.obfuscated) part.obfuscated = true;
+            parts.push(part);
+            currentText = '';
+          }
+          
+          // Apply formatting
+          switch (code) {
+            case '0': currentFormats.color = 'black'; break;
+            case '1': currentFormats.color = 'dark_blue'; break;
+            case '2': currentFormats.color = 'dark_green'; break;
+            case '3': currentFormats.color = 'dark_aqua'; break;
+            case '4': currentFormats.color = 'dark_red'; break;
+            case '5': currentFormats.color = 'dark_purple'; break;
+            case '6': currentFormats.color = 'gold'; break;
+            case '7': currentFormats.color = 'gray'; break;
+            case '8': currentFormats.color = 'dark_gray'; break;
+            case '9': currentFormats.color = 'blue'; break;
+            case 'a': currentFormats.color = 'green'; break;
+            case 'b': currentFormats.color = 'aqua'; break;
+            case 'c': currentFormats.color = 'red'; break;
+            case 'd': currentFormats.color = 'light_purple'; break;
+            case 'e': currentFormats.color = 'yellow'; break;
+            case 'f': currentFormats.color = 'white'; break;
+            case 'l': currentFormats.bold = true; break;
+            case 'm': currentFormats.strikethrough = true; break;
+            case 'n': currentFormats.underlined = true; break;
+            case 'o': currentFormats.italic = true; break;
+            case 'k': currentFormats.obfuscated = true; break;
+            case 'r': 
+              currentFormats = {
+                color: null,
+                bold: false,
+                italic: false,
+                underlined: false,
+                strikethrough: false,
+                obfuscated: false
+              }; 
+              break;
+          }
+          
+          i++; // Skip the next character (the color code)
+        } else {
+          currentText += text[i];
+        }
+      }
+      
+      // Add remaining text
+      if (currentText) {
+        const part = { text: currentText };
+        if (currentFormats.color) part.color = currentFormats.color;
+        if (currentFormats.bold) part.bold = true;
+        if (currentFormats.italic) part.italic = true;
+        if (currentFormats.underlined) part.underlined = true;
+        if (currentFormats.strikethrough) part.strikethrough = true;
+        if (currentFormats.obfuscated) part.obfuscated = true;
+        parts.push(part);
+      }
+      
+      if (parts.length === 0) {
+        return { text: text };
+      } else if (parts.length === 1) {
+        return parts[0];
+      } else {
+        return { text: '', extra: parts };
+      }
+    }
+
+    function generateCommand() {
+      try {
+        const baseItem = document.getElementById('baseItem').value.trim();
+        const customModelData = document.getElementById('customModelData').value;
+        const itemName = document.getElementById('itemName').value.trim();
+        const unbreakable = document.getElementById('unbreakable').value === 'true';
+        const hideFlags = parseInt(document.getElementById('hideFlags').value);
+        const loreInputs = document.querySelectorAll('.lore-input');
+        
+        if (!baseItem) {
+          showStatus('Please enter a base item ID', 'error');
+          return;
+        }
+        
+        if (!itemName) {
+          showStatus('Please enter a custom name for the item', 'error');
+          return;
+        }
+
+        // Build the NBT data
+        let nbtParts = [];
+        
+        // Custom Model Data
+        if (customModelData && customModelData > 0) {
+          nbtParts.push(`CustomModelData:${customModelData}`);
+        }
+        
+        // Display section
+        let displayParts = [];
+        
+        // Name with proper JSON formatting
+        const nameJson = convertToMinecraftJson(itemName);
+        displayParts.push(`Name:'${JSON.stringify(nameJson)}'`);
+        
+        // Lore
+        const loreLines = [];
+        loreInputs.forEach(input => {
+          if (input.value.trim()) {
+            const loreJson = convertToMinecraftJson(input.value.trim());
+            loreLines.push(`'${JSON.stringify(loreJson)}'`);
+          }
+        });
+        
+        if (loreLines.length > 0) {
+          displayParts.push(`Lore:[${loreLines.join(',')}]`);
+        }
+        
+        nbtParts.push(`display:{${displayParts.join(',')}}`);
+        
+        // Unbreakable
+        if (unbreakable) {
+          nbtParts.push('Unbreakable:1b');
+        }
+        
+        // Hide Flags
+        if (hideFlags > 0) {
+          nbtParts.push(`HideFlags:${hideFlags}`);
+        }
+        
+        // Generate the full command
+        const nbtString = `{${nbtParts.join(',')}}`;
+        const command = `/give @p ${baseItem}${nbtString}`;
+        
+        // Display the command
+        document.getElementById('commandOutput').textContent = command;
+        document.getElementById('outputContainer').style.display = 'block';
+        
+        showStatus('Command generated successfully!', 'success');
+        
+      } catch (error) {
+        console.error('Error generating command:', error);
+        showStatus('Error generating command. Please check your inputs.', 'error');
+      }
+    }
+
+    function copyCommand() {
+      const commandText = document.getElementById('commandOutput').textContent;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(commandText).then(() => {
+          showStatus('Command copied to clipboard!', 'success');
+        }).catch(() => {
+          showStatus('Failed to copy command', 'error');
+        });
+      } else {
+        // Fallback for older browsers
+        const textArea = document.createElement('textarea');
+        textArea.value = commandText;
+        document.body.appendChild(textArea);
+        textArea.select();
+        try {
+          document.execCommand('copy');
+          showStatus('Command copied to clipboard!', 'success');
+        } catch (err) {
+          showStatus('Failed to copy command', 'error');
+        }
+        document.body.removeChild(textArea);
+      }
+    }
+
+    function clearAll() {
+      document.getElementById('baseItem').value = 'minecraft:diamond_sword';
+      document.getElementById('customModelData').value = '1';
+      document.getElementById('itemName').value = '';
+      document.getElementById('unbreakable').value = 'false';
+      document.getElementById('hideFlags').value = '0';
+      
+      // Reset lore to single line
+      const container = document.getElementById('loreContainer');
+      container.innerHTML = `
+        <div class="lore-line">
+          <input type="text" class="lore-input" placeholder="Enter lore line..." />
+          <button class="remove-lore-btn" onclick="removeLoreLine(this)">Remove</button>
+        </div>
+      `;
+      loreCount = 1;
+      
+      document.getElementById('outputContainer').style.display = 'none';
+      updatePreview();
+      showStatus('All fields cleared', 'success');
+    }
+
+    function showStatus(message, type) {
+      const statusMessage = document.getElementById('statusMessage');
+      statusMessage.textContent = message;
+      statusMessage.className = `status-message ${type}`;
+      statusMessage.style.display = 'block';
+      
+      setTimeout(() => {
+        statusMessage.style.display = 'none';
+      }, 5000);
+    }
+
+    // Add event listeners for real-time preview updates
+    document.getElementById('itemName').addEventListener('input', updatePreview);
+    document.addEventListener('input', function(e) {
+      if (e.target.classList.contains('lore-input')) {
+        updatePreview();
+      }
+    });
+
+    // Initialize preview
+    updatePreview();
+  </script>
+</body>
+</html>

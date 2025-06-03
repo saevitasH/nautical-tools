@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nautical Hosting - Minecraft Circle Generator</title>
+  <style>
+    :root {
+      --body: #0b1a2f;
+      --secondBG: #1e293b;
+      --thirdBG: #0f172a;
+      --accent: #38bdf8;
+      --mainText: #f8fafc;
+      --text: #cbd5e1;
+      --boxShadow: 0 4px 15px -3px rgba(0, 0, 0, 0.3);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(135deg, #0f172a 0%, #0f3460 100%);
+      color: var(--text);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      min-height: 100vh;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    header {
+      width: 100%;
+      background-color: rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(10px);
+      padding: 20px 0;
+      text-align: center;
+      border-bottom: 1px solid #334155;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 10px;
+    }
+
+    .logo svg {
+      width: 36px;
+      height: 36px;
+      fill: var(--accent);
+    }
+
+    h1 {
+      font-weight: 700;
+      font-size: 2.2rem;
+      color: var(--mainText);
+    }
+
+    .tagline {
+      color: var(--accent);
+      font-size: 1rem;
+      margin-bottom: 15px;
+    }
+
+    main {
+      max-width: 1200px;
+      width: 100%;
+      padding: 30px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    .controls-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+    }
+
+    .card {
+      background: var(--secondBG);
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 25px;
+      box-shadow: var(--boxShadow);
+    }
+
+    .card h2 {
+      color: var(--mainText);
+      margin-bottom: 15px;
+      font-size: 1.4rem;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 10px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-size: 1rem;
+      color: var(--mainText);
+      margin-bottom: 8px;
+    }
+
+    .help-text {
+      font-size: 0.85rem;
+      color: var(--text);
+      margin-top: 4px;
+      opacity: 0.8;
+    }
+
+    input[type="number"], input[type="range"], select {
+      width: 100%;
+      padding: 12px;
+      font-size: 1rem;
+      border: 1px solid #475569;
+      border-radius: 6px;
+      background: var(--thirdBG);
+      color: var(--mainText);
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+
+    input[type="range"] {
+      height: 40px;
+      padding: 0;
+      -webkit-appearance: none;
+      appearance: none;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-track {
+      background: var(--thirdBG);
+      height: 8px;
+      border-radius: 4px;
+      border: 1px solid #475569;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      height: 20px;
+      width: 20px;
+      border-radius: 50%;
+      background: var(--accent);
+      cursor: pointer;
+      border: 2px solid #0f172a;
+      box-shadow: 0 2px 6px rgba(56, 189, 248, 0.3);
+      transition: all 0.15s ease;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.1);
+      box-shadow: 0 4px 12px rgba(56, 189, 248, 0.5);
+    }
+
+    input[type="range"]::-moz-range-track {
+      background: var(--thirdBG);
+      height: 8px;
+      border-radius: 4px;
+      border: 1px solid #475569;
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      height: 20px;
+      width: 20px;
+      border-radius: 50%;
+      background: var(--accent);
+      cursor: pointer;
+      border: 2px solid #0f172a;
+      box-shadow: 0 2px 6px rgba(56, 189, 248, 0.3);
+      transition: all 0.15s ease;
+    }
+
+    input[type="range"]::-moz-range-thumb:hover {
+      transform: scale(1.1);
+      box-shadow: 0 4px 12px rgba(56, 189, 248, 0.5);
+    }
+
+    input[type="number"]:focus, select:focus {
+      border-color: var(--accent);
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.25);
+    }
+
+    .range-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .range-value {
+      min-width: 40px;
+      text-align: center;
+      color: var(--accent);
+      font-weight: 600;
+      transition: color 0.2s ease;
+    }
+
+    .circle-preview {
+      background: var(--thirdBG);
+      border: 1px solid #334155;
+      border-radius: 6px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .grid-container {
+      background: #0a0e1a;
+      border: 2px solid #334155;
+      border-radius: 4px;
+      padding: 10px;
+      overflow: auto;
+      max-width: 100%;
+      max-height: 600px;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .grid {
+      display: grid;
+      gap: 1px;
+      background: #1a1a1a;
+      transition: transform 0.3s ease;
+      transform-origin: center center;
+    }
+
+    .grid-cell {
+      width: 16px;
+      height: 16px;
+      border: 1px solid #333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .grid-cell.empty {
+      background: #1a1a1a;
+      color: #555;
+    }
+
+    .grid-cell.filled {
+      background: #ffffff;
+      color: white;
+      box-shadow: 0 0 4px rgba(139, 92, 246, 0.5);
+    }
+
+    .grid-cell.center {
+      background: #ef4444;
+      color: white;
+      box-shadow: 0 0 4px rgba(239, 68, 68, 0.5);
+    }
+
+    .grid-cell:hover {
+      transform: scale(1.1);
+      z-index: 10;
+    }
+
+    .zoom-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      justify-content: center;
+    }
+
+    .zoom-btn {
+      background: var(--secondBG);
+      border: 1px solid #475569;
+      color: var(--mainText);
+      width: 32px;
+      height: 32px;
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .zoom-btn:hover {
+      background: var(--accent);
+      color: #0f172a;
+      transform: translateY(-1px);
+    }
+
+    .zoom-level {
+      color: var(--text);
+      font-size: 0.9rem;
+      min-width: 60px;
+      text-align: center;
+    }
+
+    .stats-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .stat-card {
+      background: var(--thirdBG);
+      border: 1px solid #334155;
+      border-radius: 6px;
+      padding: 15px;
+      text-align: center;
+      transition: transform 0.2s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--accent);
+    }
+
+    .stat-label {
+      color: var(--text);
+      font-size: 0.9rem;
+      margin-top: 5px;
+    }
+
+    button {
+      background: var(--accent);
+      color: #0f172a;
+      font-weight: 600;
+      border: none;
+      border-radius: 6px;
+      padding: 12px 20px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(56, 189, 248, 0.25);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    button svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .coordinates-list {
+      background: var(--thirdBG);
+      border: 1px solid #334155;
+      border-radius: 6px;
+      padding: 15px;
+      max-height: 300px;
+      overflow-y: auto;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+    }
+
+    .coordinate-item {
+      padding: 2px 0;
+      color: var(--text);
+    }
+
+    .legend {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9rem;
+    }
+
+    .legend-color {
+      width: 16px;
+      height: 16px;
+      border-radius: 2px;
+      border: 1px solid #333;
+    }
+
+    .legend-color.filled {
+      background: #ffffff;
+    }
+
+    .legend-color.center {
+      background: #ef4444;
+    }
+
+    .legend-color.empty {
+      background: #1a1a1a;
+    }
+
+    footer {
+      width: 100%;
+      background-color: rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(10px);
+      padding: 20px 0;
+      text-align: center;
+      border-top: 1px solid #334155;
+      margin-top: auto;
+    }
+
+    footer p {
+      color: var(--text);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 900px) {
+      .controls-container {
+        grid-template-columns: 1fr;
+      }
+      
+      .stats-container {
+        grid-template-columns: 1fr 1fr;
+      }
+      
+      .legend {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .card {
+        padding: 20px;
+      }
+      
+      .stats-container {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+      </svg>
+      <h1>Nautical Hosting</h1>
+    </div>
+    <p class="tagline">Minecraft Circle Generator</p>
+  </header>
+
+  <main>
+    <div class="controls-container">
+      <div class="card">
+        <h2>Circle Settings</h2>
+        
+        <div class="form-group">
+          <label for="radius">Radius:</label>
+          <div class="range-container">
+            <input type="range" id="radius" min="1" max="50" value="5" step="1" />
+            <span class="range-value" id="radiusValue">5</span>
+          </div>
+          <div class="help-text">Adjust the radius of your circle (1-50 blocks)</div>
+        </div>
+        
+        <div class="form-group">
+          <label for="thickness">Thickness:</label>
+          <select id="thickness">
+            <option value="thin">Thin (Outline only)</option>
+            <option value="thick">Thick (2 blocks thick)</option>
+            <option value="filled">Filled (Solid circle)</option>
+          </select>
+          <div class="help-text">Choose how thick you want your circle to be</div>
+        </div>
+        
+        <div class="form-group">
+          <label for="showCenter">Show Center:</label>
+          <select id="showCenter">
+            <option value="true">Yes</option>
+            <option value="false">No</option>
+          </select>
+          <div class="help-text">Mark the center point with a different color</div>
+        </div>
+        
+        <div class="form-group">
+          <label for="showCoordinates">Show Coordinates:</label>
+          <select id="showCoordinates">
+            <option value="false">No</option>
+            <option value="true">Yes</option>
+          </select>
+          <div class="help-text">Display coordinate numbers in each cell</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Circle Statistics</h2>
+        <div class="stats-container">
+          <div class="stat-card">
+            <div class="stat-value" id="diameterStat">10</div>
+            <div class="stat-label">Diameter</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="blocksStat">20</div>
+            <div class="stat-label">Total Blocks</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="perimeterStat">31.4</div>
+            <div class="stat-label">Perimeter</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="areaStat">78.5</div>
+            <div class="stat-label">Area</div>
+          </div>
+        </div>
+        
+        <div class="form-group" style="margin-top: 20px;">
+          <button onclick="downloadAsImage()">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+            </svg>
+            Download as Image
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Circle Preview</h2>
+      <div class="circle-preview">
+        <div class="legend">
+          <div class="legend-item">
+            <div class="legend-color filled"></div>
+            <span>Circle Block</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color center"></div>
+            <span>Center Point</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color empty"></div>
+            <span>Empty Space</span>
+          </div>
+        </div>
+        
+        <div class="zoom-controls">
+          <button class="zoom-btn" onclick="adjustZoom(-0.1)">−</button>
+          <span class="zoom-level" id="zoomLevel">100%</span>
+          <button class="zoom-btn" onclick="adjustZoom(0.1)">+</button>
+          <button class="zoom-btn" onclick="resetZoom()" title="Auto Fit">⌂</button>
+        </div>
+        
+        <div class="grid-container" id="gridContainer">
+          <div class="grid" id="circleGrid"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p style="color: white;">&copy; 2025 Nautical Hosting. All rights reserved.</p>
+    <p style="color: cyan;">
+      Nautical Hosting official website:
+      <a href="https://nauticalhosting.org" style="color: cyan;" target="_blank" rel="noopener noreferrer">
+        https://nauticalhosting.org
+      </a>
+    </p>
+    <p style="color: gray;">Minecraft Circle Generator v1.0</p>
+  </footer>
+
+  <script>
+    let circleData = [];
+    let currentZoom = 1;
+    let autoZoom = true;
+
+    function generateCircle() {
+      const radius = parseFloat(document.getElementById('radius').value);
+      const thickness = document.getElementById('thickness').value;
+      const showCenter = document.getElementById('showCenter').value === 'true';
+      const showCoordinates = document.getElementById('showCoordinates').value === 'true';
+      
+      const size = Math.ceil(radius * 2) + 3;
+      const center = Math.floor(size / 2);
+      
+      circleData = [];
+      const grid = document.getElementById('circleGrid');
+      grid.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
+      grid.innerHTML = '';
+      
+      let totalBlocks = 0;
+      const coordinates = [];
+      
+      for (let y = 0; y < size; y++) {
+        for (let x = 0; x < size; x++) {
+          const dx = x - center;
+          const dy = y - center;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          
+          let cellType = 'empty';
+          let isBlock = false;
+          
+          if (thickness === 'filled') {
+            if (distance <= radius + 0.5) {
+              cellType = 'filled';
+              isBlock = true;
+            }
+          } else if (thickness === 'thick') {
+            if (distance <= radius + 2 && distance >= radius - 0.5) {
+              cellType = 'filled';
+              isBlock = true;
+            }
+          } else { // thin
+            if (Math.abs(distance - radius) <= 0.5) {
+              cellType = 'filled';
+              isBlock = true;
+            }
+          }
+          
+          // Center point
+          if (showCenter && dx === 0 && dy === 0) {
+            cellType = 'center';
+            if (!isBlock) isBlock = true;
+          }
+          
+          if (isBlock && !(showCenter && dx === 0 && dy === 0)) {
+            totalBlocks++;
+            coordinates.push({ x: dx, y: dy });
+          }
+          
+          const cell = document.createElement('div');
+          cell.className = `grid-cell ${cellType}`;
+          
+          if (showCoordinates && (isBlock || cellType === 'center')) {
+            cell.textContent = `${dx},${dy}`;
+            cell.style.fontSize = '6px';
+          }
+          
+          grid.appendChild(cell);
+          circleData.push({ x: dx, y: dy, type: cellType, isBlock });
+        }
+      }
+      
+      updateStats(radius, totalBlocks);
+      updateCoordinatesList(coordinates);
+      
+      // Auto-zoom to fit
+      if (autoZoom) {
+        setTimeout(() => autoFitZoom(), 100);
+      }
+    }
+
+    function autoFitZoom() {
+      const container = document.getElementById('gridContainer');
+      const grid = document.getElementById('circleGrid');
+      
+      if (!grid.children.length) return;
+      
+      const containerWidth = container.clientWidth - 20; // Account for padding
+      const containerHeight = container.clientHeight - 20;
+      const gridSize = Math.sqrt(grid.children.length);
+      const cellSize = 17; // 16px + 1px border
+      
+      const gridWidth = gridSize * cellSize;
+      const gridHeight = gridSize * cellSize;
+      
+      const scaleX = containerWidth / gridWidth;
+      const scaleY = containerHeight / gridHeight;
+      const optimalScale = Math.min(scaleX, scaleY, 1.5); // Cap at 150%
+      
+      currentZoom = Math.max(0.1, optimalScale);
+      applyZoom();
+    }
+
+    function adjustZoom(delta) {
+      autoZoom = false;
+      currentZoom = Math.max(0.1, Math.min(3, currentZoom + delta));
+      applyZoom();
+    }
+
+    function resetZoom() {
+      autoZoom = true;
+      autoFitZoom();
+    }
+
+    function applyZoom() {
+      const grid = document.getElementById('circleGrid');
+      grid.style.transform = `scale(${currentZoom})`;
+      document.getElementById('zoomLevel').textContent = Math.round(currentZoom * 100) + '%';
+    }
+
+    function updateStats(radius, totalBlocks) {
+      document.getElementById('diameterStat').textContent = Math.round(radius * 2);
+      document.getElementById('blocksStat').textContent = totalBlocks;
+      document.getElementById('perimeterStat').textContent = (2 * Math.PI * radius).toFixed(1);
+      document.getElementById('areaStat').textContent = (Math.PI * radius * radius).toFixed(1);
+    }
+
+    function updateCoordinatesList(coordinates) {
+      const list = document.getElementById('coordinatesList');
+      if (list && coordinates.length === 0) {
+        list.innerHTML = 'No coordinates available.';
+        return;
+      }
+      
+      if (list) {
+        list.innerHTML = coordinates
+          .map(coord => `<div class="coordinate-item">X: ${coord.x > 0 ? '+' : ''}${coord.x}, Z: ${coord.y > 0 ? '+' : ''}${coord.y}</div>`)
+          .join('');
+      }
+    }
+
+    function downloadAsImage() {
+      const grid = document.getElementById('circleGrid');
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      
+      const cellSize = 20;
+      const gridSize = Math.sqrt(grid.children.length);
+      canvas.width = gridSize * cellSize;
+      canvas.height = gridSize * cellSize;
+      
+      // Background
+      ctx.fillStyle = '#1a1a1a';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      // Draw grid
+      for (let i = 0; i < grid.children.length; i++) {
+        const cell = grid.children[i];
+        const row = Math.floor(i / gridSize);
+        const col = i % gridSize;
+        const x = col * cellSize;
+        const y = row * cellSize;
+        
+        if (cell.classList.contains('filled')) {
+          ctx.fillStyle = '#ffffff';
+        } else if (cell.classList.contains('center')) {
+          ctx.fillStyle = '#ef4444';
+        } else {
+          ctx.fillStyle = '#2a2a2a';
+        }
+        
+        ctx.fillRect(x, y, cellSize, cellSize);
+        
+        // Border
+        ctx.strokeStyle = '#333';
+        ctx.strokeRect(x, y, cellSize, cellSize);
+      }
+      
+      // Download
+      const link = document.createElement('a');
+      link.download = `minecraft-circle-r${Math.round(parseFloat(document.getElementById('radius').value))}.png`;
+      link.href = canvas.toDataURL();
+      link.click();
+    }
+
+    // Smooth radius value updates
+    let radiusUpdateTimeout;
+    function updateRadiusValue() {
+      const radiusInput = document.getElementById('radius');
+      const radiusValue = document.getElementById('radiusValue');
+      const value = parseFloat(radiusInput.value);
+      
+      radiusValue.textContent = value.toFixed(1);
+      
+      // Debounce the circle generation for smoother performance
+      clearTimeout(radiusUpdateTimeout);
+      radiusUpdateTimeout = setTimeout(() => {
+        generateCircle();
+      }, 50);
+    }
+
+    // Event listeners
+    document.getElementById('radius').addEventListener('input', updateRadiusValue);
+    document.getElementById('thickness').addEventListener('change', generateCircle);
+    document.getElementById('showCenter').addEventListener('change', generateCircle);
+    document.getElementById('showCoordinates').addEventListener('change', generateCircle);
+
+    // Handle window resize for auto-zoom
+    window.addEventListener('resize', () => {
+      if (autoZoom) {
+        setTimeout(() => autoFitZoom(), 100);
+      }
+    });
+
+    // Initialize
+    generateCircle();
+  </script>
+</body>
+</html>
